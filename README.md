@@ -1,3 +1,18 @@
+==============================
+This repository is designed for those who want a base of code to support OS X and iOS, as well as using the project in Swift. We are tracking the Evernote branch as well as we can. 
+
+Goals
+1. Support OS X and iOS
+2. Support easier development in Swift 2
+
+Requirements
+Xcode 7 and above. We are using ObjC generics and other features of Xcode 7
+
+Caveats
+1. We are using this code directly within our project, not as a separate project. This means that we don't care if the code compiles on its own. In fact, it probably will not as it relies on conventions in our project. For example we use "PIColor" as a type alias for NSColor or UIColor depending on the platform. 
+2. We don't care about UI elements very much so anything we don't need - we just didn't include in our project. Simple as that. For example the Notebook picker is iOS only. We just don't use it at all. 
+
+==============================
 Evernote Cloud SDK 2.0 for iOS
 ==============================
 
