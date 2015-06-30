@@ -36,10 +36,8 @@ typedef NS_ENUM(NSUInteger, ENSSKeychainQuerySynchronizationMode) {
 /** kSecAttrLabel */
 @property (nonatomic, copy) NSString *label;
 
-#if __IPHONE_3_0 && TARGET_OS_IPHONE
 /** kSecAttrAccessGroup (only used on iOS) */
 @property (nonatomic, copy) NSString *accessGroup;
-#endif
 
 #ifdef ENSSKeychain_SYNCHRONIZATION_AVAILABLE
 /** kSecAttrSynchronizable */

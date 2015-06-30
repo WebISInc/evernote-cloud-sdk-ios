@@ -34,9 +34,10 @@
 
 #import "ENWebArchive.h"
 
+
 @interface ENWebClipNoteBuilder()
 
-@property (strong, nonatomic) UIWebView *webView;
+@property (strong, nonatomic) CocoaWebView *webView;
 @property (strong, nonatomic) NSURL *url;
 
 @property (copy, nonatomic) void (^completion)(ENNote *);
@@ -54,7 +55,7 @@
     return self;
 }
 
-- (id)initWithWebView:(UIWebView *)webView
+- (id)initWithWebView:(CocoaWebView *)webView
 {
     self = [super init];
     if (self) {
@@ -65,12 +66,17 @@
 
 - (void)buildNote:(void (^)(ENNote *))completion {
   self.completion = completion;
-  UIWebView *webView = self.webView;
+  CocoaWebView *webView = self.webView;
   NSURL *url = self.url;
   
   if (webView != nil) {
     if (url == nil) {
-      url = webView.request.URL;
+#if TARGET_OS_IPHONE
+		url = webView.request.URL;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+		url = webView.webFrame.dataSource.request.URL;
+#endif
+		
       self.url = url;
     }
 
@@ -149,7 +155,7 @@
   }
 }
 
-- (BOOL) clipContentsOfWebView:(UIWebView *)webView {
+- (BOOL) clipContentsOfWebView:(CocoaWebView *)webView {
   NSString *documentTitle = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
   
   NSArray *jsSelectAllLines = @[@"(function() {",
@@ -164,16 +170,31 @@
   NSString *jsSelectAllCode = [jsSelectAllLines componentsJoinedByString:@"\n"];
   NSString *selectAllResult = [webView stringByEvaluatingJavaScriptFromString:jsSelectAllCode];
   if ([selectAllResult boolValue] == YES) {
-    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    NSArray *oldPasteboardContents = [[pasteboard items] copy];
+	  
+#if TARGET_OS_IPHONE
+	  UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+	  NSArray *oldPasteboardContents = [[pasteboard items] copy];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
+//	  NSArray *oldPasteboardContents = [[pasteboard pasteboardItems] copy];
+#endif
     
     [webView copy:self];
     ENWebArchive * webArchive = nil;
-    NSData * webArchiveData = [pasteboard dataForPasteboardType:ENWebArchivePboardType];
+	  
+#if TARGET_OS_IPHONE
+	  NSData * webArchiveData = [pasteboard dataForPasteboardType:ENWebArchivePboardType];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	  NSData * webArchiveData = [pasteboard dataForType:ENWebArchivePboardType];
+#endif
     if (webArchiveData) {
         webArchive = [ENWebArchive webArchiveWithData:webArchiveData];
     }
-    pasteboard.items = oldPasteboardContents;
+#if TARGET_OS_IPHONE
+	  pasteboard.items = oldPasteboardContents;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	  //TODO: not sure what to do here
+#endif
     
     if (webArchive != nil) {
       [self createNoteFromContents:webArchive

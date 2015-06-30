@@ -26,25 +26,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+@import Foundation;
+
+#if TARGET_OS_IPHONE
+@import UIKit;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@import AppKit;
+#endif
+
 #import "ENSDK.h"
 #import "ENSDKLogging.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 extern NSString * const ENSessionHostSandbox;
 
 extern NSString * const ENSessionDidAuthenticateNotification;
 extern NSString * const ENSessionDidUnauthenticateNotification;
 
-typedef void (^ENSessionAuthenticateCompletionHandler)(NSError * authenticateError);
-typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);
+typedef void (^ENSessionAuthenticateCompletionHandler)(__nullable NSError * authenticateError);
+typedef void (^ENSessionListNotebooksCompletionHandler)(__nullable NSArray * notebooks, __nullable NSError * listNotebooksError);
 typedef void (^ENSessionProgressHandler)(CGFloat progress);
-typedef void (^ENSessionUploadNoteCompletionHandler)(ENNoteRef * noteRef, NSError * uploadNoteError);
-typedef void (^ENSessionShareNoteCompletionHandler)(NSString * url, NSError * shareNoteError);
-typedef void (^ENSessionDeleteNoteCompletionHandler)(NSError * deleteNoteError);
-typedef void (^ENSessionFindNotesCompletionHandler)(NSArray * findNotesResults, NSError * findNotesError);
-typedef void (^ENSessionDownloadNoteCompletionHandler)(ENNote * note, NSError * downloadNoteError);
-typedef void (^ENSessionDownloadNoteThumbnailCompletionHandler)(UIImage * thumbnail, NSError * downloadNoteThumbnailError);
+typedef void (^ENSessionUploadNoteCompletionHandler)(__nullable ENNoteRef * noteRef, __nullable NSError * uploadNoteError);
+typedef void (^ENSessionShareNoteCompletionHandler)(__nullable NSString * url, __nullable NSError * shareNoteError);
+typedef void (^ENSessionDeleteNoteCompletionHandler)(__nullable NSError * deleteNoteError);
+typedef void (^ENSessionFindNotesCompletionHandler)(__nullable NSArray * findNotesResults, __nullable NSError * findNotesError);
+typedef void (^ENSessionDownloadNoteCompletionHandler)(__nullable ENNote * note, __nullable NSError * downloadNoteError);
+typedef void (^ENSessionDownloadNoteThumbnailCompletionHandler)(__nullable PIImage * thumbnail, __nullable NSError * downloadNoteThumbnailError);
 
 /**
  *  A value indicating how the session should approach creating vs. updating existing notes when uploading.
@@ -230,7 +238,7 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
  */
 + (void)setSharedSessionConsumerKey:(NSString *)key
                      consumerSecret:(NSString *)secret
-                       optionalHost:(NSString *)host;
+                       optionalHost:(NSString * __nullable)host;
 
 /**
  *  Set up the session object with a developer token and Note Store URL. This is an alternate
@@ -269,9 +277,16 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
      you want users to be able to register an Evernote account from your app
  *  @param completion           A block to receive the result of the operation (an error if there was one).
  */
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)authenticateWithWindow:(NSWindow *)window
+			preferRegistration:(BOOL)preferRegistration
+					completion:(ENSessionAuthenticateCompletionHandler)completion;
+#elif TARGET_OS_IPHONE
 - (void)authenticateWithViewController:(UIViewController *)viewController
-                    preferRegistration:(BOOL)preferRegistration
-                            completion:(ENSessionAuthenticateCompletionHandler)completion;
+					preferRegistration:(BOOL)preferRegistration
+							completion:(ENSessionAuthenticateCompletionHandler)completion;
+
+#endif
 
 /**
  *  Unauthenticate the current user.
@@ -337,8 +352,8 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
 - (void)uploadNote:(ENNote *)note
             policy:(ENSessionUploadPolicy)policy
         toNotebook:(ENNotebook *)notebook
-     orReplaceNote:(ENNoteRef *)noteToReplace
-          progress:(ENSessionProgressHandler)progress
+     orReplaceNote:(nullable ENNoteRef *)noteToReplace
+          progress:(nullable ENSessionProgressHandler)progress
         completion:(ENSessionUploadNoteCompletionHandler)completion;
 
 /**
@@ -426,4 +441,5 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
  */
 - (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef callbackURL:(NSString *)callbackURL;
 
+NS_ASSUME_NONNULL_END
 @end

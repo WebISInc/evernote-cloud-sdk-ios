@@ -28,8 +28,13 @@
 
 #import "ENOAuthAuthenticator.h"
 #import "ENUserStoreClient.h"
+#if TARGET_OS_IPHONE
 #import "ENLoadingViewController.h"
 #import "ENOAuthViewController.h"
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#import "ENOAuthWindowController.h"
+#endif
+
 #import "ENCredentials.h"
 #import "ENCredentialStore.h"
 #import "ENSDKPrivate.h"
@@ -53,14 +58,23 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
 
 NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked";
 
+#if TARGET_OS_IPHONE
 @interface ENOAuthAuthenticator () <ENOAuthViewControllerDelegate, ENLoadingViewControllerDelegate>
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@interface ENOAuthAuthenticator () <ENOAuthViewControllerDelegate>
+#endif
 @property (nonatomic, assign) BOOL inProgress;
 
 @property (nonatomic, assign) BOOL isCancelled;
 
+#if TARGET_OS_IPHONE
 @property (nonatomic, strong) UIViewController * hostViewController;
 @property (nonatomic, strong) UINavigationController * authenticationViewController;
 @property (nonatomic, strong) ENOAuthViewController * oauthViewController;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@property (nonatomic, strong) ENOAuthWindowController *oauthWindowController;
+@property (nonatomic, strong) NSWindow *window;
+#endif
 
 @property (nonatomic, assign) ENOAuthAuthenticatorState state;
 
@@ -85,7 +99,17 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
 {
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+#if TARGET_OS_IPHONE
+		[[NSNotificationCenter defaultCenter] addObserver:self 
+												 selector:@selector(handleDidBecomeActive)
+													 name:UIApplicationDidBecomeActiveNotification 
+												   object:nil];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+		[[NSNotificationCenter defaultCenter] addObserver:self 
+												 selector:@selector(handleDidBecomeActive)
+													 name:NSApplicationDidBecomeActiveNotification 
+												   object:nil];
+#endif
     }
     return self;
 }
@@ -108,6 +132,7 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     }
 }
 
+#if TARGET_OS_IPHONE
 - (void)authenticateWithViewController:(UIViewController *)viewController
 {
     NSAssert(!self.inProgress, @"Authenticator is a single-use-only object!");
@@ -134,9 +159,7 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     loading.delegate = self;
     
     self.authenticationViewController = [[UINavigationController alloc] initWithRootViewController:loading];
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        self.authenticationViewController.modalPresentationStyle = UIModalPresentationFormSheet;
-    }
+    self.authenticationViewController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self.hostViewController presentViewController:self.authenticationViewController animated:YES completion:nil];
     
     // Start bootstrapping
@@ -155,6 +178,46 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
         [self startOauthAuthentication];
     }];
 }
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)authenticateFromWindow:(NSWindow*)window
+{
+	NSAssert(!self.inProgress, @"Authenticator is a single-use-only object!");
+	NSAssert(window, @"Must use valid viewController");
+	NSAssert(self.delegate, @"Must set authenticator delegate");
+	
+	if (self.inProgress) {
+		ENSDKLogError(@"Cannot reuse single instance of %@", [self class]);
+		return;
+	}
+	
+	self.inProgress = YES;
+	self.window = window;
+	
+	// remove all cookies from the Evernote service so that the user can log in with
+	// different credentials after declining to authorize access
+	[self emptyCookieJar];
+	
+	self.credentialStore = [[ENCredentialStore alloc] init];
+	
+	// Start bootstrapping
+	NSString * locale = [[NSLocale currentLocale] localeIdentifier];
+	ENUserStoreClient * userStore = [self.delegate userStoreClientForBootstrapping];
+	[userStore getBootstrapInfoWithLocale:locale success:^(EDAMBootstrapInfo *info) {
+		// Using first profile as the preferred profile.
+		EDAMBootstrapProfile * profile = [info.profiles objectAtIndex:0];
+		self.profiles = info.profiles;
+		self.currentProfile = profile.name;
+		self.host = profile.settings.serviceHost;
+		// start the OAuth dance to get credentials (auth token, noteStoreUrl, etc).
+		[self startOauthAuthentication];
+	} failure:^(NSError * error) {
+		// start the OAuth dance to get credentials (auth token, noteStoreUrl, etc).
+		[self startOauthAuthentication];
+	}];
+
+}
+#endif
 
 - (void)startOauthAuthentication
 {
@@ -198,6 +261,7 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
  * E.g.,
  * https://www.evernote.com/OAuth.action?oauth_token=en_oauth_test.12345
  */
+#if TARGET_OS_IPHONE
 - (NSString *)userAuthorizationURLStringWithParameters:(NSDictionary *)tokenParameters
 {
     NSString* deviceID = nil;
@@ -222,6 +286,18 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     NSString *queryString = [[self class] queryStringFromParameters:authParameters];
     return [NSString stringWithFormat:@"%@://%@/OAuth.action?%@", OAUTH_PROTOCOL_SCHEME, self.host, queryString];
 }
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (NSString *)userAuthorizationURLStringWithParameters:(NSDictionary *)tokenParameters
+{
+	NSDictionary *authParameters = @{ @"oauth_token":[tokenParameters objectForKey:@"oauth_token"],
+									  @"inapp":@"mac",
+									  // @"deviceDescription":deviceName,
+									  // @"deviceIdentifier":deviceID
+									  };
+	NSString *queryString = [[self class] queryStringFromParameters:authParameters];
+	return [NSString stringWithFormat:@"%@://%@/OAuth.action?%@", OAUTH_PROTOCOL_SCHEME, self.host, queryString];
+}
+#endif
 
 + (NSString *)deviceIdentifier {
     NSString *deviceIdentifier = nil;
@@ -240,16 +316,16 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     if (deviceIdentifier == nil) {
         // Alternatively we could try ethernet mac address...
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        NSString *uuid = [userDefaults objectForKey:@"EDAMHTTPClientUUID"];
-        if (uuid == nil) {
+        NSString *edamUUID = [userDefaults objectForKey:@"EDAMHTTPClientUUID"];
+        if (edamUUID == nil) {
             CFUUIDRef uuidRef = CFUUIDCreate(NULL);
             CFStringRef uuidStringRef = CFUUIDCreateString(NULL, uuidRef);
             CFRelease(uuidRef);
-            uuid = (__bridge_transfer NSString *)uuidStringRef;
+            edamUUID = (__bridge_transfer NSString *)uuidStringRef;
             
-            [userDefaults setObject:uuid forKey:@"EDAMHTTPClientUUID"];
+            [userDefaults setObject:edamUUID forKey:@"EDAMHTTPClientUUID"];
         }
-        deviceIdentifier = uuid;
+        deviceIdentifier = edamUUID;
     }
     
     deviceIdentifier = [self scrubString:deviceIdentifier
@@ -395,6 +471,7 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
         // the en:// URL scheme, fall back on WebKit for obtaining the OAuth token.
         // This minimizes the chance that the user will have to enter his or
         // her credentials in order to authorize the application.
+#if TARGET_OS_IPHONE
         UIDevice *device = [UIDevice currentDevice];
         if(IsEvernoteInstalled() == NO) {
             self.isMultitaskLoginDisabled = YES;
@@ -424,6 +501,14 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
             NSURL *userAuthURL = [NSURL URLWithString:userAuthURLString];
             [self openOAuthViewControllerWithURL:userAuthURL];
         }
+		
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+		NSString *userAuthURLString = [self userAuthorizationURLStringWithParameters:parameters];
+		NSURL *userAuthURL = [NSURL URLWithString:userAuthURLString];
+		[self openOAuthDialogWithURL:userAuthURL];
+#endif
+		
+
     } else {
         // OAuth step 4: final callback, with our real token
         NSString *authenticationToken = [parameters objectForKey:@"oauth_token"];
@@ -461,32 +546,58 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     self.response = nil;
 }
 
+#if TARGET_OS_IPHONE
 - (void)openOAuthViewControllerWithURL:(NSURL *)authorizationURL
 {
-    BOOL isSwitchAllowed = NO;
-    if([self.profiles count]>1) {
-        isSwitchAllowed = YES;
-    }
-    else {
-        isSwitchAllowed = NO;
-    }
-    if(!self.isSwitchingInProgress ) {
-        self.oauthViewController = [[ENOAuthViewController alloc] initWithAuthorizationURL:authorizationURL
-                                                                       oauthCallbackPrefix:[self oauthCallback]
-                                                                               profileName:self.currentProfile
-                                                                            allowSwitching:isSwitchAllowed
-                                                                                  delegate:self];
-
-        // Replace the loading view with the OAuth view. Don't animate the transition, and don't leave the loading
-        // view on the view stack.
-        [self.authenticationViewController setViewControllers:@[self.oauthViewController] animated:NO];
-    }
-    else {
-        [self.oauthViewController updateUIForNewProfile:self.currentProfile withAuthorizationURL:authorizationURL];
-        self.isSwitchingInProgress = NO;
-        
-    }
+	BOOL isSwitchAllowed = NO;
+	if([self.profiles count]>1) {
+		isSwitchAllowed = YES;
+	}
+	else {
+		isSwitchAllowed = NO;
+	}
+	if(!self.isSwitchingInProgress ) {
+		self.oauthViewController = [[ENOAuthViewController alloc] initWithAuthorizationURL:authorizationURL
+																	   oauthCallbackPrefix:[self oauthCallback]
+																			   profileName:self.currentProfile
+																			allowSwitching:isSwitchAllowed
+																				  delegate:self];
+		
+		// Replace the loading view with the OAuth view. Don't animate the transition, and don't leave the loading
+		// view on the view stack.
+		[self.authenticationViewController setViewControllers:@[self.oauthViewController] animated:NO];
+	}
+	else {
+		[self.oauthViewController updateUIForNewProfile:self.currentProfile withAuthorizationURL:authorizationURL];
+		self.isSwitchingInProgress = NO;
+		
+	}
 }
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)openOAuthDialogWithURL:(NSURL *)authorizationURL {
+	BOOL isSwitchAllowed = NO;
+	if([self.profiles count]>1) {
+		isSwitchAllowed = YES;
+	}
+	else {
+		isSwitchAllowed = NO;
+	}
+	if(!self.isSwitchingInProgress ) {
+		
+		self.oauthWindowController = [[ENOAuthWindowController alloc] initWithAuthorizationURL:authorizationURL
+																		   oauthCallbackPrefix:[self oauthCallback]
+																				   profileName:self.currentProfile
+																				allowSwitching:isSwitchAllowed  
+																					  delegate:self];
+		[self.oauthWindowController presentSheetForWindow:self.window];
+	}
+	else {
+		[self.oauthWindowController updateUIForNewProfile:self.currentProfile withAuthorizationURL:authorizationURL];
+		self.isSwitchingInProgress = NO;        
+	}
+}
+
+#endif
 
 - (void)completeAuthenticationWithCredentials:(ENCredentials *)credentials usesLinkedAppNotebook:(BOOL)linkedAppNotebook
 {
@@ -498,10 +609,17 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     if (linkedAppNotebook) {
         [authInfo setObject:@YES forKey:ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked];
     }
-    [self.hostViewController dismissViewControllerAnimated:YES completion:^{
-        self.hostViewController = nil;
-        [self.delegate authenticatorDidAuthenticateWithCredentials:credentials authInfo:authInfo];
-    }];
+	
+#if TARGET_OS_IPHONE
+	[self.hostViewController dismissViewControllerAnimated:YES completion:^{
+		self.hostViewController = nil;
+		[self.delegate authenticatorDidAuthenticateWithCredentials:credentials authInfo:authInfo];
+	}];
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	[self.delegate authenticatorDidAuthenticateWithCredentials:credentials authInfo:authInfo];
+
+#endif
 }
 
 - (void)completeAuthenticationWithError:(NSError *)error
@@ -511,10 +629,16 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     }
     
     self.state = ENOAuthAuthenticatorStateLoggedOut;
-    [self.hostViewController dismissViewControllerAnimated:YES completion:^{
-        self.hostViewController = nil;
-        [self.delegate authenticatorDidFailWithError:error];
-    }];
+	
+#if TARGET_OS_IPHONE
+	[self.hostViewController dismissViewControllerAnimated:YES completion:^{
+		self.hostViewController = nil;
+		[self.delegate authenticatorDidFailWithError:error];
+	}];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	[self.delegate authenticatorDidFailWithError:error];
+
+#endif
 }
 
 - (void) switchProfile {
@@ -605,7 +729,7 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
 }
 
 #pragma mark - ENOAuthViewControllerDelegate
-
+#if TARGET_OS_IPHONE
 - (void)oauthViewControllerDidCancel:(ENOAuthViewController *)sender
 {
     NSError* error = [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeCancelled userInfo:nil];
@@ -622,36 +746,52 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     [self completeAuthenticationWithError:error];
 }
 
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)oauthViewControllerDidCancel:(id)sender {
+	[self completeAuthenticationWithError:nil];
+}
+
+- (void)oauthViewControllerDidSwitchProfile:(id)sender {
+	self.isSwitchingInProgress = YES;
+	[self switchProfile];
+}
+
+- (void)oauthViewController:(id)sender didFailWithError:(NSError *)error {
+	[self completeAuthenticationWithError:error];
+}
+#endif
+
+
 - (BOOL)handleOpenURL:(NSURL *)url {
-    if([[url host] isEqualToString:@"invalidURL"]) {
-        NSLog(@"Invalid URL sent to Evernote!");
-        return NO;
-    }
-    // update state
-    self.state = ENOAuthAuthenticatorStateGotCallback;
-    NSString* hostName = [NSString stringWithFormat:@"en-%@", self.consumerKey];
-    BOOL canHandle = NO;
-    // Check if we got back the oauth token
-    if ([hostName isEqualToString:[url scheme]] == YES
-        && [@"oauth" isEqualToString:[url host]] == YES) {
-        canHandle = YES;
-        NSString* oAuthPrefix = [NSString stringWithFormat:@"en-%@://oauth/", self.consumerKey];
-        NSString *callback = [url.absoluteString stringByReplacingOccurrencesOfString:oAuthPrefix withString:@""];
-        [self gotCallbackURL:callback];
-    }
-    // Check if the login was cancelled
-    else if ([hostName isEqualToString:[url scheme]] == YES
-             && [@"loginCancelled" isEqualToString:[url host]] == YES) {
-        canHandle = YES;
-        [self gotCallbackURL:nil];
-    }
-    // Check if we need to switch profiles
-    else if ([hostName isEqualToString:[url scheme]] == YES
-             && [@"incorrectProfile" isEqualToString:[url host]] == YES) {
-        [self enableIsActiveBecauseOfCallback];
-        return [self canHandleSwitchProfileURL:url];
-    }
-    return  canHandle;
+	if([[url host] isEqualToString:@"invalidURL"]) {
+		NSLog(@"Invalid URL sent to Evernote!");
+		return NO;
+	}
+	// update state
+	self.state = ENOAuthAuthenticatorStateGotCallback;
+	NSString* hostName = [NSString stringWithFormat:@"en-%@", self.consumerKey];
+	BOOL canHandle = NO;
+	// Check if we got back the oauth token
+	if ([hostName isEqualToString:[url scheme]] == YES
+		&& [@"oauth" isEqualToString:[url host]] == YES) {
+		canHandle = YES;
+		NSString* oAuthPrefix = [NSString stringWithFormat:@"en-%@://oauth/", self.consumerKey];
+		NSString *callback = [url.absoluteString stringByReplacingOccurrencesOfString:oAuthPrefix withString:@""];
+		[self gotCallbackURL:callback];
+	}
+	// Check if the login was cancelled
+	else if ([hostName isEqualToString:[url scheme]] == YES
+			 && [@"loginCancelled" isEqualToString:[url host]] == YES) {
+		canHandle = YES;
+		[self gotCallbackURL:nil];
+	}
+	// Check if we need to switch profiles
+	else if ([hostName isEqualToString:[url scheme]] == YES
+			 && [@"incorrectProfile" isEqualToString:[url host]] == YES) {
+		[self enableIsActiveBecauseOfCallback];
+		return [self canHandleSwitchProfileURL:url];
+	}
+	return  canHandle;
 }
 
 - (void)enableIsActiveBecauseOfCallback {
@@ -683,33 +823,11 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     [self getOAuthTokenForURL:callbackURL];
 }
 
+#if TARGET_OS_IPHONE
 - (void)oauthViewController:(ENOAuthViewController *)sender receivedOAuthCallbackURL:(NSURL *)url
 {
     [self getOAuthTokenForURL:url];
 }
-
-- (void)getOAuthTokenForURL:(NSURL*)url {
-    // OAuth step 3: got authorization from the user, now get a real token.
-    NSDictionary *parameters = [[self class] parametersFromQueryString:url.query];
-    NSString *oauthToken = [parameters objectForKey:@"oauth_token"];
-    NSString *oauthVerifier = [parameters objectForKey:@"oauth_verifier"];
-    self.userSelectedLinkedAppNotebook = [[parameters objectForKey:@"sandbox_lnb"] boolValue];
-    NSURLRequest *authTokenRequest = [ENGCOAuth URLRequestForPath:@"/oauth"
-                                                    GETParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                   oauthVerifier, @"oauth_verifier", nil]
-                                                           scheme:OAUTH_PROTOCOL_SCHEME
-                                                             host:self.host
-                                                      consumerKey:self.consumerKey
-                                                   consumerSecret:self.consumerSecret
-                                                      accessToken:oauthToken
-                                                      tokenSecret:self.tokenSecret];
-    NSURLConnection * connection = [NSURLConnection connectionWithRequest:authTokenRequest delegate:self];
-    if (!connection) {
-        // can't make connection, so immediately fail.
-        [self completeAuthenticationWithError:[ENError connectionFailedError]];
-    };
-}
-
 - (void)loadingViewControllerDidCancel:(ENLoadingViewController *)viewController
 {
     self.isCancelled = YES;
@@ -720,4 +838,33 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
         [self.delegate authenticatorDidFailWithError:[NSError errorWithDomain:ENErrorDomain code:ENErrorCodeCancelled userInfo:nil]];
     }];
 }
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)oauthViewController:(id)sender receivedOAuthCallbackURL:(NSURL *)url {
+	[self getOAuthTokenForURL:url];
+}
+#endif
+
+- (void)getOAuthTokenForURL:(NSURL*)url {
+	// OAuth step 3: got authorization from the user, now get a real token.
+	NSDictionary *parameters = [[self class] parametersFromQueryString:url.query];
+	NSString *oauthToken = [parameters objectForKey:@"oauth_token"];
+	NSString *oauthVerifier = [parameters objectForKey:@"oauth_verifier"];
+	self.userSelectedLinkedAppNotebook = [[parameters objectForKey:@"sandbox_lnb"] boolValue];
+	NSURLRequest *authTokenRequest = [ENGCOAuth URLRequestForPath:@"/oauth"
+													GETParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+																   oauthVerifier, @"oauth_verifier", nil]
+														   scheme:OAUTH_PROTOCOL_SCHEME
+															 host:self.host
+													  consumerKey:self.consumerKey
+												   consumerSecret:self.consumerSecret
+													  accessToken:oauthToken
+													  tokenSecret:self.tokenSecret];
+	NSURLConnection * connection = [NSURLConnection connectionWithRequest:authTokenRequest delegate:self];
+	if (!connection) {
+		// can't make connection, so immediately fail.
+		[self completeAuthenticationWithError:[ENError connectionFailedError]];
+	};
+}
+
+
 @end

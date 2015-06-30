@@ -30,32 +30,37 @@
 
 @implementation ENTheme
 
-+(UIColor*)defaultTintColor {
-    return [UIColor colorWithRed:45.0/255.0 green:190/255.0 blue:96/255.0 alpha:1.0];
++(PIColor*)defaultTintColor {
+    return [PIColor colorWithRed:45.0/255.0 green:190/255.0 blue:96/255.0 alpha:1.0];
 }
 
-+(UIColor*)defaultBackgroundColor {
-    return [UIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1.0];
++(PIColor*)defaultBackgroundColor {
+    return [PIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1.0];
 }
 
-+(UIColor*)defaultBusinessColor {
-    return [UIColor colorWithRed:77.0/255 green:129.0/255 blue:140.0/255 alpha:1];
++(PIColor*)defaultBusinessColor {
+    return [PIColor colorWithRed:77.0/255 green:129.0/255 blue:140.0/255 alpha:1];
 }
 
-+(UIColor*)defaultShareColor {
-    return [UIColor colorWithWhite:0.302 alpha:0.800];
++(PIColor*)defaultShareColor {
+    return [PIColor colorWithWhite:0.302 alpha:0.800];
 }
 
-+(UIColor*)defaultSeparatorColor {
-    return [UIColor colorWithRed:210.0/255.0 green:210.0/255.0 blue:210.0/255.0 alpha:1];
++(PIColor*)defaultSeparatorColor {
+    return [PIColor colorWithRed:210.0/255.0 green:210.0/255.0 blue:210.0/255.0 alpha:1];
 }
 
 BOOL IsIPad() {
-    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+#if TARGET_OS_IPHONE
+	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	return NO;
+#endif
+
 }
 
 CGFloat OnePxHeight() {
-    return 1.0/[UIScreen mainScreen].scale;
+    return 1.0/appContentScaleFactor;
 }
 
 @end

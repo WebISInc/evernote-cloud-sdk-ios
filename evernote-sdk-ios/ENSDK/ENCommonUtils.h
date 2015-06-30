@@ -6,7 +6,12 @@
 //  Copyright (c) 2014 Evernote Corporation. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+
+#if TARGET_OS_IPHONE
+@import UIKit;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@import AppKit;
+#endif
 
 @interface ENCommonUtils : NSObject
 

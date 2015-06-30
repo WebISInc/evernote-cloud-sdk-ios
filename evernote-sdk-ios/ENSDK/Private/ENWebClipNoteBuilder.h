@@ -26,12 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#if TARGET_OS_IPHONE
+@import UIKit;
+#define CocoaWebView UIWebView
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@import AppKit;
+@import WebKit;
+
+#define CocoaWebView WebView
+#endif
+
 
 @class ENNote;
 
 @interface ENWebClipNoteBuilder : NSObject
 - (id)initWithUrl:(NSURL *)url;
-- (id)initWithWebView:(UIWebView *)webView;
+- (id)initWithWebView:(CocoaWebView *)webView;
 - (void)buildNote:(void(^)(ENNote *))completion;
 @end

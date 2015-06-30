@@ -26,8 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+@import Foundation;
+#if TARGET_OS_IPHONE
+@import UIKit;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@import AppKit;
+#endif
 
 /**
  *  This class represents a resource attached to an Evernote note. A resource is often an image,
@@ -82,7 +86,7 @@
  *
  *  @return A resouce object instance.
  */
-- (id)initWithImage:(UIImage *)image;
+- (id)initWithImage:(PIImage *)image;
 
 /**
  *  Convenience function to get the ENML media tag for this resource

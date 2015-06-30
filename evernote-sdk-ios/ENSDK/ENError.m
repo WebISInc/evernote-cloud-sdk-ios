@@ -142,31 +142,31 @@ NSString * ENErrorDomain = @"ENErrorDomain";
 + (NSString *)localizedDescriptionForENErrorCode:(ENErrorCode)code {
     switch (code) {
         case ENErrorCodeInvalidData:
-            return @"Invalid note data.";
+            return NSLocalizedString(@"Invalid note data.", @"");
             
         case ENErrorCodeAuthExpired:
-            return @"Authentication for Evernote Service expired. Please login again.";
+            return NSLocalizedString(@"Authentication for Evernote Service expired. Please login again.",@"");
             
         case ENErrorCodeDataConflict:
-            return @"Conflict note data.";
+            return NSLocalizedString(@"Conflict note data.",@"");
             
         case ENErrorCodeENMLInvalid:
-            return @"ENML for note is invalid.";
+            return NSLocalizedString(@"ENML for note is invalid.",@"");
             
         case ENErrorCodePermissionDenied:
-            return @"Permission denied for operation.";
+            return NSLocalizedString(@"Permission denied for operation.",@"");
             
         case ENErrorCodeLimitReached:
-            return @"Note exceeded size limit to upload.";
+            return NSLocalizedString(@"Note exceeded size limit to upload.",@"");
             
         case ENErrorCodeQuotaReached:
-            return @"User has run out of upload quota to Evernote.";
+            return NSLocalizedString(@"User has run out of upload quota to Evernote.",@"");
             
         case ENErrorCodeRateLimitReached:
-            return @"Application reached hourly API call limit to Evernote.";
+            return NSLocalizedString(@"Application reached hourly API call limit to Evernote.",@"");
             
         default:
-            return @"Unknown error";
+            return NSLocalizedString(@"Unknown error",@"");
     }
 }
 

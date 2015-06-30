@@ -132,7 +132,6 @@ extern NSString *const kENSSKeychainWhereKey;
 
 #pragma mark - Configuration
 
-#if __IPHONE_4_0 && TARGET_OS_IPHONE
 /**
  Returns the accessibility type for all future passwords saved to the Keychain.
 
@@ -156,6 +155,5 @@ extern NSString *const kENSSKeychainWhereKey;
  @see accessibilityType
  */
 + (void)setAccessibilityType:(CFTypeRef)accessibilityType;
-#endif
 
 @end

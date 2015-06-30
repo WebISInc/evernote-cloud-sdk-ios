@@ -306,9 +306,17 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     }
 }
 
+#if TARGET_OS_IPHONE
 - (void)authenticateWithViewController:(UIViewController *)viewController
-                    preferRegistration:(BOOL)preferRegistration
-                            completion:(ENSessionAuthenticateCompletionHandler)completion
+					preferRegistration:(BOOL)preferRegistration
+							completion:(ENSessionAuthenticateCompletionHandler)completion
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)authenticateWithWindow:(NSWindow *)window
+			preferRegistration:(BOOL)preferRegistration
+					completion:(ENSessionAuthenticateCompletionHandler)completion;
+
+#endif
 {
     if (!completion) {
         [NSException raise:NSInvalidArgumentException format:@"handler required"];
@@ -353,7 +361,11 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     // web auth only.
     self.authenticator.useWebAuthenticationOnly = (SessionHostOverride != nil);
     
-    [self.authenticator authenticateWithViewController:viewController];
+#if TARGET_OS_IPHONE
+	[self.authenticator authenticateWithViewController:viewController];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	[self.authenticator authenticateFromWindow:window];
+#endif
 }
 
 - (void)performPostAuthentication
@@ -1557,11 +1569,17 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         NSURLResponse * response = nil;
         NSError * error = nil;
         NSData * thumbnailData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-        UIImage * thumbnail = nil;
+        PIImage * thumbnail = nil;
         if (!thumbnailData) {
             ENSDKLogError(@"Failed to get thumb data at url %@", urlString);
         } else {
-            thumbnail = [UIImage imageWithData:thumbnailData];
+			
+#if TARGET_OS_IPHONE
+			thumbnail = [UIImage imageWithData:thumbnailData];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+			thumbnail = [[NSImage alloc] initWithData:thumbnailData];
+#endif
+			
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (thumbnail) {
@@ -1584,8 +1602,13 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         return NO;
     }
     
-    NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid];
-    return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme]];
+#if TARGET_OS_IPHONE
+	NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid];
+	return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme]];
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	return NO;
+#endif
 }
 
 - (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef callbackURL:(NSString *)callbackURL {
@@ -1593,8 +1616,12 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         return NO;
     }
     
+#if TARGET_OS_IPHONE
     NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/?callback=%@", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid, [callbackURL en_stringByUrlEncoding]];
     return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme]];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	return NO;
+#endif
 }
 
 #pragma mark - Private routines

@@ -27,10 +27,11 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "ENWebClipNoteBuilder.h"
 @class ENNote;
 @class ENResource;
 @class ENNotebook;
-@class UIWebView;
+
 
 extern NSString * const ENWebArchiveDataMIMEType;
 
@@ -98,7 +99,7 @@ typedef void (^ENNoteGenerateWebArchiveDataCompletionHandler)(NSData * data);
 - (void)generateWebArchiveData:(ENNoteGenerateWebArchiveDataCompletionHandler)completion;
 
 /**
- *  Class method to create and populate a note object from a loaded UIWebView of your content. The styled contents 
+ *  Class method to create and populate a note object from a loaded WebView of your content. The styled contents 
  *  of the DOM as currently loaded are captured into the content of the note. Remote images (i.e. in <img> tags) 
  *  are captured as resources. (CSS-based images are not pulled in as resources, but will remain remote links in 
  *  the resulting note.) 
@@ -111,5 +112,5 @@ typedef void (^ENNoteGenerateWebArchiveDataCompletionHandler)(NSData * data);
  *  @param webView    A UIWebView (on or offscreen) that contains loaded web content for capture.
  *  @param completion A prepopulated note object appropriate for upload.
  */
-+ (void)populateNoteFromWebView:(UIWebView *)webView completion:(ENNotePopulateFromWebViewCompletionHandler)completion;
++ (void)populateNoteFromWebView:(CocoaWebView *)webView completion:(ENNotePopulateFromWebViewCompletionHandler)completion;
 @end

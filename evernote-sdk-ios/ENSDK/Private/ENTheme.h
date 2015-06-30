@@ -26,16 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+@import Foundation;
+#if TARGET_OS_IPHONE
+@import UIKit;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@import AppKit;
+#endif
+
 
 @interface ENTheme : NSObject
 
-+(UIColor*)defaultTintColor;
-+(UIColor*)defaultBackgroundColor;
-+(UIColor*)defaultBusinessColor;
-+(UIColor*)defaultShareColor;
-+(UIColor*)defaultSeparatorColor;
++(PIColor*)defaultTintColor;
++(PIColor*)defaultBackgroundColor;
++(PIColor*)defaultBusinessColor;
++(PIColor*)defaultShareColor;
++(PIColor*)defaultSeparatorColor;
 BOOL IsIPad();
 CGFloat OnePxHeight();
 

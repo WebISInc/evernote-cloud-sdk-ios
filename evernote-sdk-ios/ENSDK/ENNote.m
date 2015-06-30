@@ -28,7 +28,6 @@
 
 #import "ENSDKPrivate.h"
 #import "NSString+ENScrubbing.h"
-#import "ENWebClipNoteBuilder.h"
 #import "ENMLUtility.h"
 #import "ENWebArchive.h"
 #import "ENMIMEUtils.h"
@@ -210,7 +209,7 @@
     }];
 }
 
-+ (void)populateNoteFromWebView:(UIWebView *)webView completion:(ENNotePopulateFromWebViewCompletionHandler)completion
++ (void)populateNoteFromWebView:(CocoaWebView *)webView completion:(ENNotePopulateFromWebViewCompletionHandler)completion;
 {
     if (!completion) {
         ENSDKLogError(@"+populateNoteFromWebView requires a valid completion block");
