@@ -27,11 +27,15 @@
  */
 
 @import Foundation;
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 @import UIKit;
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 @import AppKit;
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class EDAMResource;
 
 /**
  *  This class represents a resource attached to an Evernote note. A resource is often an image,
@@ -64,7 +68,7 @@
  *
  *  @return A resouce object instance.
  */
-- (id)initWithData:(NSData *)data mimeType:(NSString *)mimeType filename:(NSString *)filename;
+- (id)initWithData:(NSData *)data mimeType:(NSString *)mimeType filename:(NSString * _Nullable)filename;
 
 /**
  *  Initializer for data and MIME type.
@@ -95,4 +99,13 @@
  */
 - (NSString*) mediaTag;
 
+/**
+ *  Convenience function to get the EDAMResource version
+ *
+ *  @return EDAMResource
+ */
+- (EDAMResource * _Nullable)EDAMResource;
 @end
+
+
+NS_ASSUME_NONNULL_END

@@ -49,30 +49,34 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
     return self;
 }
 
-- (void)invokeAsyncBoolBlock:(BOOL(^)())block
-                     success:(void(^)(BOOL val))success
-                     failure:(void(^)(NSError *error))failure
-{
-    dispatch_async(self.queue, ^(void) {
-        __block BOOL retVal = NO;
-        @try {
-            if (block) {
-                retVal = block();
-                dispatch_async(dispatch_get_main_queue(),
-                               ^{
-                                   if (success) {
-                                       success(retVal);
-                                   }
-                               });
-            }
-        }
-        @catch (NSException *exception) {
-            [self handleException:exception withFailureBlock:failure];
-        }
-    });
+- (dispatch_queue_t)responseQueue {
+	return self.customResponseQueue ? :dispatch_get_main_queue();
 }
 
-- (void)invokeAsyncInt32Block:(int32_t(^)())block
+- (void)invokeAsyncBoolBlock:(BOOL(^)(void))block
+					 success:(void(^)(BOOL val))success
+					 failure:(void(^)(NSError *error))failure
+{
+	dispatch_async(self.queue, ^(void) {
+		__block BOOL retVal = NO;
+		@try {
+			if (block) {
+				retVal = block();
+				dispatch_async(self.responseQueue,
+							   ^{
+								   if (success) {
+									   success(retVal);
+								   }
+							   });
+			}
+		}
+		@catch (NSException *exception) {
+			[self handleException:exception withFailureBlock:failure];
+		}
+	});
+}
+
+- (void)invokeAsyncInt32Block:(int32_t(^)(void))block
                       success:(void(^)(int32_t val))success
                       failure:(void(^)(NSError *error))failure
 {
@@ -81,7 +85,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
         @try {
             if (block) {
                 retVal = block();
-                dispatch_async(dispatch_get_main_queue(),
+                dispatch_async(self.responseQueue,
                                ^{
                                    if (success) {
                                        success(retVal);
@@ -96,7 +100,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
 }
 
 // use id instead of NSObject* so block type-checking is happy
-- (void)invokeAsyncIdBlock:(id(^)())block
+- (void)invokeAsyncIdBlock:(id(^)(void))block
                    success:(void(^)(id))success
                    failure:(void(^)(NSError *error))failure
 {
@@ -105,7 +109,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
         @try {
             if (block) {
                 retVal = block();
-                dispatch_async(dispatch_get_main_queue(),
+                dispatch_async(self.responseQueue,
                                ^{
                                    if (success) {
                                        success(retVal);
@@ -119,15 +123,15 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
     });
 }
 
-- (void)invokeAsyncVoidBlock:(void(^)())block
-                     success:(void(^)())success
+- (void)invokeAsyncVoidBlock:(void(^)(void))block
+                     success:(void(^)(void))success
                      failure:(void(^)(NSError *error))failure
 {
     dispatch_async(self.queue, ^(void) {
         @try {
             if (block) {
                 block();
-                dispatch_async(dispatch_get_main_queue(),
+                dispatch_async(self.responseQueue,
                                ^{
                                    if (success) {
                                        success();
@@ -147,7 +151,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
 {
     NSError * error = [ENError errorFromException:exception];
     if (failure) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(self.responseQueue, ^{
             failure(error);
         });
     }
@@ -161,7 +165,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
         (edamErrorCode == EDAMErrorCode_AUTH_EXPIRED ||
          edamErrorCode == EDAMErrorCode_INVALID_AUTH)) {
         ENSDKLogError(@"ENStoreClient got authentication EDAM error %u", edamErrorCode);
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(self.responseQueue, ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:ENStoreClientDidFailWithAuthenticationErrorNotification object:self];
         });
     }

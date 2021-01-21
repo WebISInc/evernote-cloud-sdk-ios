@@ -27,9 +27,9 @@
  */
 
 @import Foundation;
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 @import UIKit;
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 @import AppKit;
 #endif
 
@@ -41,7 +41,7 @@
 +(PIColor*)defaultBusinessColor;
 +(PIColor*)defaultShareColor;
 +(PIColor*)defaultSeparatorColor;
-BOOL IsIPad();
-CGFloat OnePxHeight();
+BOOL IsIPad(void);
+CGFloat OnePxHeight(void);
 
 @end

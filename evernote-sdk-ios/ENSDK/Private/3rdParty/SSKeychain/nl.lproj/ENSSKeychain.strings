@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Sommige van de argumenten zijn ongeldig";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Kan geheugen niet toewijzen";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "De gebruikersnaam of het wachtwoord dat u hebt ingevoerd is niet correct";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Onmogelijk om de verstrekte gegevens te decoderen";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Verwijzen naar SecBase.h voor beschrijving";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "Het opgegeven item bestaat al in de sleutelhanger";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "Gebruiker interactie is niet toegestaan";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "Het opgegeven item is niet gevonden in de sleutelhanger";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Geen sleutelhanger beschikbaar. U moet mogelijk de computer opnieuw opstarten";
+
+/* No comment provided by engineer. */
+"errSecParam" = "Een of meer parameters doorgegeven aan een functie waren niet geldig";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Functie of bewerking niet geïmplementeerd";
+

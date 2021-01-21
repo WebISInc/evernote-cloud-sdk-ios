@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Alguns argumentos estão inválidos";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Falha ao alocar a memória";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "O nome do usuário ou senha estão incorretos";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Não foi possível decodificar os dados fornecidos";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Dirija-se à SecBase.h para descrição";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "O item especificado já existe nas chaves";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "A interação do usuário não é permitida";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "O item especificado não pode ser encontrado nas chaves";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Nenhuma chave está disponível. Talvez você precise reiniciar o computador.";
+
+/* No comment provided by engineer. */
+"errSecParam" = "Um ou mais parâmetros informados para uma função estão inválidos.";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Função ou operação não implementada";
+

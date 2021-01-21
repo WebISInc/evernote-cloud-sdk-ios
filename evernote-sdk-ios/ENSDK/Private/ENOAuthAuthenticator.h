@@ -27,9 +27,9 @@
  */
 
 @import Foundation;
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 @import UIKit;
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 @import AppKit;
 #endif
 
@@ -53,9 +53,9 @@ extern NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked;
 @property (nonatomic, assign) BOOL useWebAuthenticationOnly;
 @property (nonatomic, assign) BOOL preferRegistration;
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 - (void)authenticateWithViewController:(UIViewController *)viewController;
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 - (void)authenticateFromWindow:(NSWindow*)window;
 #endif
 

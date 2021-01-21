@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Some of the arguments were invalid";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Failed to allocate memory";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "Brukernavn eller passord er ikke korrekt.";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Kan ikke dekode data.";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Kontroller SecBase.h for beskrivelse";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "Det spesifiserte innholdet finnes allerede i nøkkelring";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "Bruker kan ikke behandle.";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "Det spesifiserte innholdet ble ikke funnet i nøkkelring";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Nøkkelring ikke tilgjengelig. Du må muligens starte datamaskinen på nytt.";
+
+/* No comment provided by engineer. */
+"errSecParam" = "En eller flere parametere knyttet til en funksjon er ugyldige.";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Funksjon eller operasjon ikke implementert";
+

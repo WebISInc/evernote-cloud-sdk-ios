@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ENSDK/ENSDK.h"
+#import "ENSDK.h"
 #import "EDAM.h"
 #import "ENUserStoreClient.h"
 #import "ENPreferencesStore.h"
@@ -35,6 +35,8 @@
 #import "ENNoteStoreClient.h"
 #import "ENBusinessNoteStoreClient.h"
 #import "ENSDKPrivate.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface ENSession (Advanced)
 /**
@@ -249,3 +251,5 @@
 +(instancetype) preferenceStoreWithSecurityApplicationGroupIdentifier:(NSString*)groupId;
 
 @end
+
+NS_ASSUME_NONNULL_END

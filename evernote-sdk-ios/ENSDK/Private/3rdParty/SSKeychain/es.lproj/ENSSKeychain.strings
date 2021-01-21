@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Alguno de los argumentos era inválido";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Fallo al asignar la memoria";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "El nombr de usuario o frase de paso introducido no son correctos";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Incapaz de decodificar los datos provistos";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Refiérase a SecBase.h para descripción";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "El elemento especificado ya existe en el llavero";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "No está permitida la interacción del usuario";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "El elemento especificado no se encuentra en el llavero";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "No existe un llavero disponible. Debería reiniciar el ordenador";
+
+/* No comment provided by engineer. */
+"errSecParam" = "Uno o mas parámetros convertidos a función eran inválidos";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Función u operación no implementadas";
+

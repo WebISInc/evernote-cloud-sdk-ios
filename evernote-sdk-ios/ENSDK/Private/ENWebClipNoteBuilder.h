@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_TV
 @import UIKit;
 #define CocoaWebView UIWebView
 
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 @import AppKit;
 @import WebKit;
 
@@ -42,6 +42,8 @@
 
 @interface ENWebClipNoteBuilder : NSObject
 - (id)initWithUrl:(NSURL *)url;
+#if !TARGET_OS_WATCH
 - (id)initWithWebView:(CocoaWebView *)webView;
+#endif
 - (void)buildNote:(void(^)(ENNote *))completion;
 @end

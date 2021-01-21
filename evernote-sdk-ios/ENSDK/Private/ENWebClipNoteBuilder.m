@@ -71,9 +71,9 @@
   
   if (webView != nil) {
     if (url == nil) {
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 		url = webView.request.URL;
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 		url = webView.webFrame.dataSource.request.URL;
 #endif
 		
@@ -171,10 +171,10 @@
   NSString *selectAllResult = [webView stringByEvaluatingJavaScriptFromString:jsSelectAllCode];
   if ([selectAllResult boolValue] == YES) {
 	  
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	  UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
 	  NSArray *oldPasteboardContents = [[pasteboard items] copy];
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 	  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
 //	  NSArray *oldPasteboardContents = [[pasteboard pasteboardItems] copy];
 #endif
@@ -182,17 +182,17 @@
     [webView copy:self];
     ENWebArchive * webArchive = nil;
 	  
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	  NSData * webArchiveData = [pasteboard dataForPasteboardType:ENWebArchivePboardType];
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 	  NSData * webArchiveData = [pasteboard dataForType:ENWebArchivePboardType];
 #endif
     if (webArchiveData) {
         webArchive = [ENWebArchive webArchiveWithData:webArchiveData];
     }
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	  pasteboard.items = oldPasteboardContents;
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 	  //TODO: not sure what to do here
 #endif
     

@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Certaines valeurs n'étaient pas valides";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Échec de l'allocation de mémoire";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "L'identifiant ou le mot de passe ne sont pas corrects";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Impossible de décoder les données fournies";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Reportez-vous à SecBase.h pour la description";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "L'item indiqué figure déjà sur le porte-clefs";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "Cette interactio n'est pas autorisée";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "L'item indiqué n'a pas été trouvé sur le porte-clefs";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Pas de porte-clefs disponible. Vous devez certainement redémarrer votre ordinateur";
+
+/* No comment provided by engineer. */
+"errSecParam" = "Un ou plusieurs paramètres associés à une fonction n'étaient pas valides";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Fonction ou opération non implémentée";
+

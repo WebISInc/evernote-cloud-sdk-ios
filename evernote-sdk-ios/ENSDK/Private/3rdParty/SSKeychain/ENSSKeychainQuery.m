@@ -8,6 +8,7 @@
 
 #import "ENSSKeychainQuery.h"
 #import "ENSSKeychain.h"
+#import "Informant-Swift.h"
 
 @implementation ENSSKeychainQuery
 
@@ -37,6 +38,15 @@
 
 	[self deleteItem:nil];
 
+#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+	
+	PIKeyChain *keyChain = [[PIKeyChain alloc] initWithSharedStringService:self.service description:PIKeyChain.defaultKeychainDescription synchronizable:NO accessibility:PIKeyChainAccessibilityAlways];
+	
+	[keyChain setData: self.passwordData forKey:self.account error:error];
+
+	status = error == nil;
+	
+#else
 	NSMutableDictionary *query = [self query];
 	[query setObject:self.passwordData forKey:(__bridge id)kSecValueData];
 	if (self.label) {
@@ -51,6 +61,7 @@
 	if (status != errSecSuccess && error != NULL) {
 		*error = [[self class] errorWithCode:status];
 	}
+#endif
 
 	return (status == errSecSuccess);
 }
@@ -66,7 +77,7 @@
 	}
 
 	NSMutableDictionary *query = [self query];
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	status = SecItemDelete((__bridge CFDictionaryRef)query);
 #else
 	CFTypeRef result = NULL;
@@ -162,7 +173,7 @@
 
 #ifdef ENSSKeychain_SYNCHRONIZATION_AVAILABLE
 + (BOOL)isSynchronizationAvailable {
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	// Apple suggested way to check for 7.0 at runtime
 	// https://developer.apple.com/library/ios/documentation/userexperience/conceptual/transitionguide/SupportingEarlieriOS.html
 	return floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1;
@@ -224,7 +235,7 @@
 		case errSecSuccess: return nil;
 		case ENSSKeychainErrorBadArguments: message = NSLocalizedStringFromTable(@"ENSSKeychainErrorBadArguments", @"ENSSKeychain", nil); break;
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 		case errSecUnimplemented: {
 			message = NSLocalizedStringFromTable(@"errSecUnimplemented", @"ENSSKeychain", nil);
 			break;

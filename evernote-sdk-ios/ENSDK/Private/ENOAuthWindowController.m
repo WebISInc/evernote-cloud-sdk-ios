@@ -8,7 +8,7 @@
 
 #import "ENOAuthWindowController.h"
 
-@interface ENOAuthWindowController()
+@interface ENOAuthWindowController() <WebFrameLoadDelegate, WebPolicyDelegate>
 
 @property (nonatomic, strong) NSURL *authorizationURL;
 @property (nonatomic, strong) NSString *oauthCallbackPrefix; 

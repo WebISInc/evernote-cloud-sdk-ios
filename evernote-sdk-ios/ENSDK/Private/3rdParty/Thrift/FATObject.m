@@ -101,11 +101,17 @@ void FATInvalidAbstractInvocation(SEL selector, Class class) {
   [ms appendString:NSStringFromClass([self class])];
   [ms appendFormat:@": %p;", self];
 
-  NSArray *structFields = [[self class] structFields];
-  for (FATField *aField in structFields) {
-    [ms appendFormat:@" %@ = %@;", aField.name, [self valueForKey:aField.name]];
-  }
-  
+//	@try {
+//		NSArray *structFields = [[self class] structFields];
+//		for (FATField *aField in structFields) {
+//			[ms appendFormat:@" %@ = %@;", aField.name, [self valueForKey:aField.name]];
+//		}
+//	} @catch (NSException *exception) {
+//
+//	} @finally {
+//		
+//	}
+
   [ms appendString:@">"];
   return ms;
 }

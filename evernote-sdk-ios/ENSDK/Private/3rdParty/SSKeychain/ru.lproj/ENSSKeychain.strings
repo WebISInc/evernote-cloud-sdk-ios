@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Некоторые аргументы неверны";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Распределить память не удалось";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "Имя пользователя или пароль неверны";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Обработать данные не удалось";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Обратитесь к SecBase.h для описания";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "Данный пункт уже присутствует в цепи";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "Участие пользователя не допускается";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "Данный пункт в цепи не найден";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Цепь недоступна. Вам придётся перезагрузить компьютер";
+
+/* No comment provided by engineer. */
+"errSecParam" = "Один или несколько параметров функции неверны";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Функция или операция не поддерживается";
+

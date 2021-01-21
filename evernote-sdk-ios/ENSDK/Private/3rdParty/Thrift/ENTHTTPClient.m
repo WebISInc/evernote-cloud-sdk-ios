@@ -41,7 +41,7 @@ typedef void (^ProgressBlock)(NSUInteger bytesWritten, long long totalBytesWritt
 - (id) initWithURL: (NSURL *) aURL {
     return [self initWithURL: aURL
                    userAgent: nil
-                     timeout: 0];
+                     timeout: 300];
 }
 
 - (id) initWithURL: (NSURL *) aURL

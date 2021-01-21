@@ -116,8 +116,8 @@ static NSString * EDAMEDAM_USER_USERNAME_REGEX = @"^[a-z0-9]([a-z0-9_-]{0,62}[a-
 static int32_t EDAMEDAM_USER_NAME_LEN_MIN = 1;
 static int32_t EDAMEDAM_USER_NAME_LEN_MAX = 255;
 static NSString * EDAMEDAM_USER_NAME_REGEX = @"^[^\\p{Cc}\\p{Zl}\\p{Zp}]{1,255}$";
-static int32_t EDAMEDAM_TAG_NAME_LEN_MIN = 1;
-static int32_t EDAMEDAM_TAG_NAME_LEN_MAX = 100;
+static uint16_t EDAMEDAM_TAG_NAME_LEN_MIN = 1;
+static uint16_t EDAMEDAM_TAG_NAME_LEN_MAX = 100;
 static NSString * EDAMEDAM_TAG_NAME_REGEX = @"^[^,\\p{Cc}\\p{Z}]([^,\\p{Cc}\\p{Zl}\\p{Zp}]{0,98}[^,\\p{Cc}\\p{Z}])?$";
 static int32_t EDAMEDAM_NOTE_TITLE_LEN_MIN = 1;
 static int32_t EDAMEDAM_NOTE_TITLE_LEN_MAX = 255;
@@ -508,19 +508,19 @@ nil];
 + (NSString *) EDAM_USER_NAME_REGEX{
   return EDAMEDAM_USER_NAME_REGEX;
 }
-+ (int32_t) EDAM_TAG_NAME_LEN_MIN{
++ (uint16_t) EDAM_TAG_NAME_LEN_MIN{
   return EDAMEDAM_TAG_NAME_LEN_MIN;
 }
-+ (int32_t) EDAM_TAG_NAME_LEN_MAX{
++ (uint16_t) EDAM_TAG_NAME_LEN_MAX{
   return EDAMEDAM_TAG_NAME_LEN_MAX;
 }
 + (NSString *) EDAM_TAG_NAME_REGEX{
   return EDAMEDAM_TAG_NAME_REGEX;
 }
-+ (int32_t) EDAM_NOTE_TITLE_LEN_MIN{
++ (uint16_t) EDAM_NOTE_TITLE_LEN_MIN{
   return EDAMEDAM_NOTE_TITLE_LEN_MIN;
 }
-+ (int32_t) EDAM_NOTE_TITLE_LEN_MAX{
++ (uint16_t) EDAM_NOTE_TITLE_LEN_MAX{
   return EDAMEDAM_NOTE_TITLE_LEN_MAX;
 }
 + (NSString *) EDAM_NOTE_TITLE_REGEX{

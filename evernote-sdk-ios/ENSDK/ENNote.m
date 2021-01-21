@@ -209,6 +209,8 @@
     }];
 }
 
+#if !TARGET_OS_WATCH
+
 + (void)populateNoteFromWebView:(CocoaWebView *)webView completion:(ENNotePopulateFromWebViewCompletionHandler)completion;
 {
     if (!completion) {
@@ -225,6 +227,7 @@
     // The note builder's completion handler has the same signature and behavior as our own, so pass it directly through.
     [builder buildNote:completion];
 }
+#endif
 
 #pragma mark - Protected methods
 

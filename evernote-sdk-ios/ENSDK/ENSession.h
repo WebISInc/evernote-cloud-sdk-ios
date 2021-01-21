@@ -28,9 +28,9 @@
 
 @import Foundation;
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 @import UIKit;
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 @import AppKit;
 #endif
 
@@ -44,15 +44,15 @@ extern NSString * const ENSessionHostSandbox;
 extern NSString * const ENSessionDidAuthenticateNotification;
 extern NSString * const ENSessionDidUnauthenticateNotification;
 
-typedef void (^ENSessionAuthenticateCompletionHandler)(__nullable NSError * authenticateError);
-typedef void (^ENSessionListNotebooksCompletionHandler)(__nullable NSArray * notebooks, __nullable NSError * listNotebooksError);
+typedef void (^ENSessionAuthenticateCompletionHandler)(NSError *_Nullable authenticateError);
+typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray *_Nullable notebooks, NSError *_Nullable listNotebooksError);
 typedef void (^ENSessionProgressHandler)(CGFloat progress);
-typedef void (^ENSessionUploadNoteCompletionHandler)(__nullable ENNoteRef * noteRef, __nullable NSError * uploadNoteError);
-typedef void (^ENSessionShareNoteCompletionHandler)(__nullable NSString * url, __nullable NSError * shareNoteError);
-typedef void (^ENSessionDeleteNoteCompletionHandler)(__nullable NSError * deleteNoteError);
-typedef void (^ENSessionFindNotesCompletionHandler)(__nullable NSArray * findNotesResults, __nullable NSError * findNotesError);
-typedef void (^ENSessionDownloadNoteCompletionHandler)(__nullable ENNote * note, __nullable NSError * downloadNoteError);
-typedef void (^ENSessionDownloadNoteThumbnailCompletionHandler)(__nullable PIImage * thumbnail, __nullable NSError * downloadNoteThumbnailError);
+typedef void (^ENSessionUploadNoteCompletionHandler)(ENNoteRef *_Nullable noteRef, NSError *_Nullable uploadNoteError);
+typedef void (^ENSessionShareNoteCompletionHandler)(NSString *_Nullable url, NSError *_Nullable shareNoteError);
+typedef void (^ENSessionDeleteNoteCompletionHandler)(NSError *_Nullable deleteNoteError);
+typedef void (^ENSessionFindNotesCompletionHandler)(NSArray *_Nullable findNotesResults, NSError *_Nullable findNotesError);
+typedef void (^ENSessionDownloadNoteCompletionHandler)(ENNote *_Nullable note, NSError *_Nullable downloadNoteError);
+typedef void (^ENSessionDownloadNoteThumbnailCompletionHandler)(PIImage *_Nullable thumbnail, NSError *_Nullable downloadNoteThumbnailError);
 
 /**
  *  A value indicating how the session should approach creating vs. updating existing notes when uploading.
@@ -225,6 +225,14 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
  */
 @property (nonatomic, readonly) long long businessUploadLimit;
 
+/**
+ * Custom response queue if you want the responses to go to a specific queue.
+ * Leave it nil to go to main queue
+ */
+@property (strong,nonatomic) dispatch_queue_t customResponseQueue;
+
+@property (nonatomic, readonly, nullable) NSString * primaryAuthenticationToken;
+
 #pragma mark - Session setup
 
 /**
@@ -259,6 +267,13 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
  */
 + (ENSession *)sharedSession;
 
+
+/**
+ *  Reset the shared session object
+ *
+ */
++ (void)clearSharedSession;
+
 /**
  *  Set to YES if the client would like to opt out from refreshing the notebooks cache on launch
  *
@@ -277,11 +292,11 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
      you want users to be able to register an Evernote account from your app
  *  @param completion           A block to receive the result of the operation (an error if there was one).
  */
-#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 - (void)authenticateWithWindow:(NSWindow *)window
 			preferRegistration:(BOOL)preferRegistration
 					completion:(ENSessionAuthenticateCompletionHandler)completion;
-#elif TARGET_OS_IPHONE
+#elif TARGET_OS_IOS || TARGET_OS_TV
 - (void)authenticateWithViewController:(UIViewController *)viewController
 					preferRegistration:(BOOL)preferRegistration
 							completion:(ENSessionAuthenticateCompletionHandler)completion;
@@ -420,26 +435,26 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
 
 #pragma mark - Interaction with Evernote app
 
-/**
- *  View this note in the Evernote app
- *
- *  @param noteRef The note to view
- *
- *  @return No means the Evernote app is not installed or not available. Yes does not guarantee that this note is successfuly opened,
- *          as the user could have logged into another account in the Evernote app.
- */
-- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef;
-
-/**
- *  View this note in the Evernote app and call callbackURL when done
- *
- *  @param noteRef      The note to view
- *  @param callbackURL  callback URL to open after done with the note, something like YOURAPP_URL_SCHEME://callback
- *
- *  @return No means the Evernote app is not installed or not available. Yes does not guarantee that this note is successfuly opened,
- *          as the user could have logged into another account in the Evernote app.
- */
-- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef callbackURL:(NSString *)callbackURL;
+///**
+// *  View this note in the Evernote app
+// *
+// *  @param noteRef The note to view
+// *
+// *  @return No means the Evernote app is not installed or not available. Yes does not guarantee that this note is successfuly opened,
+// *          as the user could have logged into another account in the Evernote app.
+// */
+//- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef;
+//
+///**
+// *  View this note in the Evernote app and call callbackURL when done
+// *
+// *  @param noteRef      The note to view
+// *  @param callbackURL  callback URL to open after done with the note, something like YOURAPP_URL_SCHEME://callback
+// *
+// *  @return No means the Evernote app is not installed or not available. Yes does not guarantee that this note is successfuly opened,
+// *          as the user could have logged into another account in the Evernote app.
+// */
+//- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef callbackURL:(NSString *)callbackURL;
 
 NS_ASSUME_NONNULL_END
 @end

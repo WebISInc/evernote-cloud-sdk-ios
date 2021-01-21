@@ -154,11 +154,6 @@
     [self.webView loadRequest:[NSURLRequest requestWithURL:self.authorizationURL]];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return YES;
-}
-
 # pragma mark - UIWebViewDelegate
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error

@@ -59,7 +59,7 @@
  *  NB If you have an HTML source that's not already sanitized, you can load it into a UIWebView and
  *  use +[ENNote populateNoteFromWebView:completion:] to capture it.
  *
- *  @param Sanitized HTML string.
+ *  @param html Sanitized HTML string.
  *
  *  @return A valid note content instance.
  */

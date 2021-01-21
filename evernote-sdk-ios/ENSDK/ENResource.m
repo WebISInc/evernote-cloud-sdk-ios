@@ -29,7 +29,6 @@
 #import "ENSDKPrivate.h"
 #import "NSData+EvernoteSDK.h"
 #import "ENMLUtility.h"
-#import "ENResource.h"
 
 @interface ENResource ()
 @property (nonatomic, copy) NSString * sourceUrl;
@@ -76,12 +75,12 @@
 
 - (id)initWithImage:(PIImage *)image
 {
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	// Encode both ways and use the smaller of the two. Ties goes to (lossless) PNG.
 	NSData * pngData = UIImagePNGRepresentation(image);
 	NSData * jpegData = UIImageJPEGRepresentation(image, 0.7);
 
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 	// Encode both ways and use the smaller of the two. Ties goes to (lossless) PNG.
 
 	[image lockFocus];

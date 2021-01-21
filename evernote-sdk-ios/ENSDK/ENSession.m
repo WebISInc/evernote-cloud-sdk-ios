@@ -40,6 +40,8 @@
 #import "NSString+URLEncoding.h"
 #import "ENShareURLHelper.h"
 #import "ENCommonUtils.h"
+#import "DefaultKeys.h"
+#import "Informant-Swift.h"
 
 // Strings visible publicly.
 NSString * const ENSessionHostSandbox = @"sandbox.evernote.com";
@@ -144,6 +146,9 @@ static NSString * SecurityApplicationGroupIdentifier;
 static NSString * _keychainGroup, * _keychainAccessGroup;
 static BOOL disableRefreshingNotebooksCacheOnLaunch;
 
+static ENSession * session = nil;
+static dispatch_once_t sessionInitToken;
+
 + (void)setSharedSessionConsumerKey:(NSString *)key
                      consumerSecret:(NSString *)secret
                        optionalHost:(NSString *)host
@@ -166,11 +171,14 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     ConsumerSecret = nil;
 }
 
++ (void)clearSharedSession {
+	session = nil;
+	sessionInitToken = 0;
+}
+
 + (ENSession *)sharedSession
 {
-    static ENSession * session = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    dispatch_once(&sessionInitToken, ^{
         session = [[ENSession alloc] init];
     });
     return session;
@@ -210,7 +218,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     
     NSString * error = @"Cannot create shared Evernote session without either a valid consumer key/secret pair, or a developer token set";
     // Use NSLog and not the session logger here, or we'll deadlock since we're still creating the session.
-    NSLog(@"%@", error);
+	[PILog error:[NSString stringWithFormat:@"ENSession Error: %@", error]];
     [NSException raise:NSInvalidArgumentException format:@"%@", error];
     return NO;
 }
@@ -261,7 +269,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         [self performPostAuthentication];
         return;
     }
-    
+	
     // We'll restore an existing session if there was one. Check to see if we have valid
     // primary credentials stashed away already.
     ENCredentials * credentials = [self credentialsForHost:self.sessionHost];
@@ -277,7 +285,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     // We appear to have valid personal credentials, so populate the user object from cache
     self.user = [self.preferences decodedObjectForKey:ENSessionPreferencesUser];
     self.businessUser = [self.preferences decodedObjectForKey:ENSessionPreferencesBusinessUser];
-    
+
     [self performPostAuthentication];
 }
 
@@ -306,12 +314,12 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     }
 }
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 - (void)authenticateWithViewController:(UIViewController *)viewController
 					preferRegistration:(BOOL)preferRegistration
 							completion:(ENSessionAuthenticateCompletionHandler)completion
 
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 - (void)authenticateWithWindow:(NSWindow *)window
 			preferRegistration:(BOOL)preferRegistration
 					completion:(ENSessionAuthenticateCompletionHandler)completion;
@@ -361,9 +369,9 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     // web auth only.
     self.authenticator.useWebAuthenticationOnly = (SessionHostOverride != nil);
     
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	[self.authenticator authenticateWithViewController:viewController];
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 	[self.authenticator authenticateFromWindow:window];
 #endif
 }
@@ -515,6 +523,13 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     [self selectInitialSessionHost];
     
     [self notifyAuthenticationChanged];
+	
+#ifdef MAIN_APP_TARGET
+	//if this is the main app, also send these credentials to the helper
+	[[PIDistributedController sharedInstance] sendDistributedNotification:NO xpcClosure:^(id proxyObject) {
+		[proxyObject xpc_evernoteAuthenticateStateChange];
+	}];
+#endif
 }
 
 - (BOOL)handleOpenURL:(NSURL *)url
@@ -1574,9 +1589,9 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
             ENSDKLogError(@"Failed to get thumb data at url %@", urlString);
         } else {
 			
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 			thumbnail = [UIImage imageWithData:thumbnailData];
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 			thumbnail = [[NSImage alloc] initWithData:thumbnailData];
 #endif
 			
@@ -1595,34 +1610,34 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     });
 }
 
-#pragma mark - Interaction with Evernote app
-
-- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef {
-    if (IsEvernoteInstalled() == NO) {
-        return NO;
-    }
-    
-#if TARGET_OS_IPHONE
-	NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid];
-	return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme]];
-
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
-	return NO;
-#endif
-}
-
-- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef callbackURL:(NSString *)callbackURL {
-    if (IsEvernoteInstalled() == NO) {
-        return NO;
-    }
-    
-#if TARGET_OS_IPHONE
-    NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/?callback=%@", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid, [callbackURL en_stringByUrlEncoding]];
-    return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme]];
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
-	return NO;
-#endif
-}
+//#pragma mark - Interaction with Evernote app
+//
+//- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef {
+//    if (IsEvernoteInstalled() == NO) {
+//        return NO;
+//    }
+//    
+//#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
+//	NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid];
+//	return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme] options:@{} completionHandler:nil];
+//
+//#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+//	return NO;
+//#endif
+//}
+//
+//- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef callbackURL:(NSString *)callbackURL {
+//    if (IsEvernoteInstalled() == NO) {
+//        return NO;
+//    }
+//    
+//#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
+//    NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/?callback=%@", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid, [callbackURL en_stringByUrlEncoding]];
+//    return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme] options:@{} completionHandler:nil];
+//#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+//	return NO;
+//#endif
+//}
 
 #pragma mark - Private routines
 
@@ -1719,7 +1734,8 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     if (!_userStore && self.primaryAuthenticationToken) {
         _userStore = [ENUserStoreClient userStoreClientWithUrl:[self userStoreUrl] authenticationToken:self.primaryAuthenticationToken];
     }
-    return _userStore;
+	_userStore.customResponseQueue = self.customResponseQueue;
+   return _userStore;
 }
 
 - (ENNoteStoreClient *)primaryNoteStore
@@ -1734,6 +1750,8 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
             }
         }
     }
+	
+	_primaryNoteStore.customResponseQueue = self.customResponseQueue;
     return _primaryNoteStore;
 }
 
@@ -1744,7 +1762,8 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         client.delegate = self;
         _businessNoteStore = client;
     }
-    return _businessNoteStore;
+	_businessNoteStore.customResponseQueue = self.customResponseQueue;
+   return _businessNoteStore;
 }
 
 - (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
@@ -1752,6 +1771,8 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     ENLinkedNotebookRef * linkedNotebookRef = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:linkedNotebook];
     ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:linkedNotebookRef];
     linkedClient.delegate = self;
+	
+	linkedClient.customResponseQueue = self.customResponseQueue;
     return linkedClient;
 }
 
@@ -1764,7 +1785,8 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     } else if (noteRef.type == ENNoteRefTypeShared) {
         ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:noteRef.linkedNotebook];
         linkedClient.delegate = self;
-        return linkedClient;
+	 	linkedClient.customResponseQueue = self.customResponseQueue;
+		return linkedClient;
     }
     return nil;
 }
@@ -1909,10 +1931,18 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         [self.preferences setObject:@YES forKey:ENSessionPreferencesAppNotebookIsLinked];
     }
     [self performPostAuthentication];
+	
+#ifdef MAIN_APP_TARGET
+	//if this is the main app, also send these credentials to the helper
+	[[PIDistributedController sharedInstance] sendDistributedNotification:NO xpcClosure:^(id proxyObject) {
+		[proxyObject xpc_evernoteAuthenticateStateChange];
+	}];
+#endif
 }
 
 - (void)authenticatorDidFailWithError:(NSError *)error
 {
+	[PILog error:[NSString stringWithFormat:@"Evernote Authentication Error: %@", [error description]]];
     [self completeAuthenticationWithError:error];
 }
 
@@ -1956,12 +1986,13 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
 @implementation ENSessionDefaultLogger
 - (void)evernoteLogInfoString:(NSString *)str;
 {
-    NSLog(@"ENSDK: %@", str);
+	if (appLoggingLevel & PILoggingSync)
+		[PILog info:[NSString stringWithFormat:@"ENSDK: %@", str]];
 }
 
 - (void)evernoteLogErrorString:(NSString *)str;
 {
-    NSLog(@"ENSDK ERROR: %@", str);
+	[PILog error:[NSString stringWithFormat:@"ENSDK ERROR: %@", str]];
 }
 @end
 

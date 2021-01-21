@@ -164,9 +164,9 @@ typedef int64_t EDAMMessageThreadID;
 @property (nonatomic, strong) NSNumber * defaultLatitude; // double
 @property (nonatomic, strong) NSNumber * defaultLongitude; // double
 @property (nonatomic, strong) NSNumber * preactivation; // BOOL
-@property (nonatomic, strong) NSArray * viewedPromotions;
+@property (nonatomic, strong) NSArray<NSString*> * viewedPromotions;
 @property (nonatomic, strong) NSString * incomingEmailAddress;
-@property (nonatomic, strong) NSArray * recentMailedAddresses;
+@property (nonatomic, strong) NSArray<NSString*> * recentMailedAddresses;
 @property (nonatomic, strong) NSString * comments;
 @property (nonatomic, strong) NSNumber * dateAgreedToTermsOfService; // EDAMTimestamp
 @property (nonatomic, strong) NSNumber * maxReferrals; // int32_t
@@ -353,7 +353,7 @@ typedef int64_t EDAMMessageThreadID;
 @property (nonatomic, strong) NSString * contentClass;
 @property (nonatomic, strong) EDAMLazyMap * applicationData;
 @property (nonatomic, strong) NSString * lastEditedBy;
-@property (nonatomic, strong) NSDictionary * classifications;
+@property (nonatomic, strong) NSDictionary<NSString*,NSString*> * classifications;
 @property (nonatomic, strong) NSNumber * creatorId; // EDAMUserID
 @property (nonatomic, strong) NSNumber * lastEditorId; // EDAMUserID
 @property (nonatomic, strong) NSNumber * sharedWithBusiness; // BOOL
@@ -390,10 +390,10 @@ typedef int64_t EDAMMessageThreadID;
 @property (nonatomic, strong) NSNumber * active; // BOOL
 @property (nonatomic, strong) NSNumber * updateSequenceNum; // int32_t
 @property (nonatomic, strong) NSString * notebookGuid;
-@property (nonatomic, strong) NSArray * tagGuids;
-@property (nonatomic, strong) NSArray * resources;
+@property (nonatomic, strong) NSArray<EDAMGuid> * tagGuids;
+@property (nonatomic, strong) NSArray<EDAMResource*> * resources;
 @property (nonatomic, strong) EDAMNoteAttributes * attributes;
-@property (nonatomic, strong) NSArray * tagNames;
+@property (nonatomic, strong) NSArray<NSString*> * tagNames;
 @property (nonatomic, strong) NSArray * sharedNotes;
 @property (nonatomic, strong) EDAMNoteRestrictions * restrictions;
 @end
@@ -509,7 +509,7 @@ typedef int64_t EDAMMessageThreadID;
 @property (nonatomic, strong) NSNumber * published; // BOOL
 @property (nonatomic, strong) NSString * stack;
 @property (nonatomic, strong) NSArray * sharedNotebookIds;
-@property (nonatomic, strong) NSArray * sharedNotebooks;
+@property (nonatomic, strong) NSArray<EDAMSharedNotebook*> * sharedNotebooks;
 @property (nonatomic, strong) EDAMBusinessNotebook * businessNotebook;
 @property (nonatomic, strong) EDAMUser * contact;
 @property (nonatomic, strong) EDAMNotebookRestrictions * restrictions;

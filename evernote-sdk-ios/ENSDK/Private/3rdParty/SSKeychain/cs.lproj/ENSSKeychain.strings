@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Některé argumenty byly neplatné";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Nepodařilo se přidělit paměť";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "Zadané uživatelské jméno nebo heslo nejsou správné";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Nelze dekódovat poskytnutá data";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Obraťte se na SecBase.h pro popis";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "Uvedená položka již v klíčence existuje.";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "Uživatelská interakce není povolena";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "Uvedená položka nebyla v klíčence nalezena.";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Není dostupná žádná klíčenka. Bude nutné restartovat počítač";
+
+/* No comment provided by engineer. */
+"errSecParam" = "Jeden nebo více parametrů přiřazených funkci nejsou platné";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Funkce nebo operace není implementována";
+

@@ -29,6 +29,10 @@
 #import <Foundation/Foundation.h>
 
 @interface ENPreferencesStore : NSObject
+#if TARGET_NAME_InformantHelper
++ (void)migratePrefsToSandboxIfNecessary;
+#endif
+
 - (id)objectForKey:(NSString *)key;
 - (void)setObject:(id)object forKey:(NSString *)key;
 - (id)decodedObjectForKey:(NSString *)key;               // used for objects that conform to NSCoding

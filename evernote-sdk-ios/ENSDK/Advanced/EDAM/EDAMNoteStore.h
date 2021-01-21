@@ -73,17 +73,17 @@ enum EDAMShareRelationshipPrivilegeLevel {
 @property (nonatomic, strong) NSNumber * currentTime; // EDAMTimestamp
 @property (nonatomic, strong) NSNumber * chunkHighUSN; // int32_t
 @property (nonatomic, strong) NSNumber * updateCount; // int32_t
-@property (nonatomic, strong) NSArray * notes;
-@property (nonatomic, strong) NSArray * notebooks;
-@property (nonatomic, strong) NSArray * tags;
-@property (nonatomic, strong) NSArray * searches;
-@property (nonatomic, strong) NSArray * resources;
-@property (nonatomic, strong) NSArray * expungedNotes;
-@property (nonatomic, strong) NSArray * expungedNotebooks;
-@property (nonatomic, strong) NSArray * expungedTags;
-@property (nonatomic, strong) NSArray * expungedSearches;
-@property (nonatomic, strong) NSArray * linkedNotebooks;
-@property (nonatomic, strong) NSArray * expungedLinkedNotebooks;
+@property (nonatomic, strong) NSArray<EDAMNote*> * notes;
+@property (nonatomic, strong) NSArray<EDAMNotebook*> * notebooks;
+@property (nonatomic, strong) NSArray<EDAMTag*>* tags;
+@property (nonatomic, strong) NSArray<EDAMSavedSearch*> * searches;
+@property (nonatomic, strong) NSArray<EDAMResource*> * resourcedes;
+@property (nonatomic, strong) NSArray<EDAMGuid> * expungedNotes;
+@property (nonatomic, strong) NSArray<EDAMGuid> * expungedNotebooks;
+@property (nonatomic, strong) NSArray<EDAMGuid> * expungedTags;
+@property (nonatomic, strong) NSArray<EDAMGuid> * expungedSearches;
+@property (nonatomic, strong) NSArray<EDAMLinkedNotebook*> * linkedNotebooks;
+@property (nonatomic, strong) NSArray<EDAMGuid> * expungedLinkedNotebooks;
 @property (nonatomic, strong) EDAMPreferences * preferences;
 @end
 
@@ -104,7 +104,7 @@ enum EDAMShareRelationshipPrivilegeLevel {
 @property (nonatomic, strong) NSNumber * includedSharedNotes; // BOOL
 @property (nonatomic, strong) NSNumber * omitSharedNotebooks; // BOOL
 @property (nonatomic, strong) NSString * requireNoteContentClass;
-@property (nonatomic, strong) NSSet * notebookGuids;
+@property (nonatomic, strong) NSSet<EDAMGuid> * notebookGuids;
 @end
 
 @interface EDAMNoteFilter : FATObject 
@@ -112,7 +112,7 @@ enum EDAMShareRelationshipPrivilegeLevel {
 @property (nonatomic, strong) NSNumber * ascending; // BOOL
 @property (nonatomic, strong) NSString * words;
 @property (nonatomic, strong) EDAMGuid notebookGuid;
-@property (nonatomic, strong) NSArray * tagGuids;
+@property (nonatomic, strong) NSArray<EDAMGuid> * tagGuids;
 @property (nonatomic, strong) NSString * timeZone;
 @property (nonatomic, strong) NSNumber * inactive; // BOOL
 @property (nonatomic, strong) NSString * emphasized;
@@ -122,9 +122,9 @@ enum EDAMShareRelationshipPrivilegeLevel {
 @interface EDAMNoteList : FATObject 
 @property (nonatomic, strong) NSNumber * startIndex; // int32_t
 @property (nonatomic, strong) NSNumber * totalNotes; // int32_t
-@property (nonatomic, strong) NSArray * notes;
-@property (nonatomic, strong) NSArray * stoppedWords;
-@property (nonatomic, strong) NSArray * searchedWords;
+@property (nonatomic, strong) NSArray<EDAMNote*> * notes;
+@property (nonatomic, strong) NSArray<NSString*> * stoppedWords;
+@property (nonatomic, strong) NSArray<NSString*> * searchedWords;
 @property (nonatomic, strong) NSNumber * updateCount; // int32_t
 @end
 
@@ -137,7 +137,7 @@ enum EDAMShareRelationshipPrivilegeLevel {
 @property (nonatomic, strong) NSNumber * deleted; // EDAMTimestamp
 @property (nonatomic, strong) NSNumber * updateSequenceNum; // int32_t
 @property (nonatomic, strong) NSString * notebookGuid;
-@property (nonatomic, strong) NSArray * tagGuids;
+@property (nonatomic, strong) NSArray<EDAMGuid> * tagGuids;
 @property (nonatomic, strong) EDAMNoteAttributes * attributes;
 @property (nonatomic, strong) NSString * largestResourceMime;
 @property (nonatomic, strong) NSNumber * largestResourceSize; // int32_t
@@ -146,9 +146,9 @@ enum EDAMShareRelationshipPrivilegeLevel {
 @interface EDAMNotesMetadataList : FATObject 
 @property (nonatomic, strong) NSNumber * startIndex; // int32_t
 @property (nonatomic, strong) NSNumber * totalNotes; // int32_t
-@property (nonatomic, strong) NSArray * notes;
-@property (nonatomic, strong) NSArray * stoppedWords;
-@property (nonatomic, strong) NSArray * searchedWords;
+@property (nonatomic, strong) NSArray<EDAMNoteMetadata*> * notes;
+@property (nonatomic, strong) NSArray<NSString*> * stoppedWords;
+@property (nonatomic, strong) NSArray<NSString*> * searchedWords;
 @property (nonatomic, strong) NSNumber * updateCount; // int32_t
 @end
 
@@ -226,10 +226,10 @@ enum EDAMShareRelationshipPrivilegeLevel {
 @end
 
 @interface EDAMRelatedResult : FATObject 
-@property (nonatomic, strong) NSArray * notes;
-@property (nonatomic, strong) NSArray * notebooks;
-@property (nonatomic, strong) NSArray * tags;
-@property (nonatomic, strong) NSArray * containingNotebooks;
+@property (nonatomic, strong) NSArray<EDAMNote*> * notes;
+@property (nonatomic, strong) NSArray<EDAMNotebook*> * notebooks;
+@property (nonatomic, strong) NSArray<EDAMTag*> * tags;
+@property (nonatomic, strong) NSArray<EDAMNotebookDescriptor*> * containingNotebooks;
 @property (nonatomic, strong) NSString * debugInfo;
 @property (nonatomic, strong) NSArray * experts;
 @property (nonatomic, strong) NSArray * relatedContent;

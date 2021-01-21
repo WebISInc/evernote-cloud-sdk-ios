@@ -27,6 +27,7 @@
  */
 
 #import "ENTheme.h"
+#import "DefaultKeys.h"
 
 @implementation ENTheme
 
@@ -51,9 +52,9 @@
 }
 
 BOOL IsIPad() {
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
-#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 	return NO;
 #endif
 

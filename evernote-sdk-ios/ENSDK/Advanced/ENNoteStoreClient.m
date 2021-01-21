@@ -175,7 +175,7 @@
 
 #pragma mark - NoteStore notebook methods
 
-- (void)listNotebooksWithSuccess:(void(^)(NSArray *notebooks))success
+- (void)listNotebooksWithSuccess:(void(^)(NSArray<EDAMNotebook*> *notebooks))success
                          failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
@@ -242,7 +242,7 @@
 
 #pragma mark - NoteStore tags methods
 
-- (void)listTagsWithSuccess:(void(^)(NSArray *tags))success
+- (void)listTagsWithSuccess:(void(^)(NSArray<EDAMTag*> *tags))success
                     failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
@@ -251,7 +251,7 @@
 }
 
 - (void)listTagsByNotebookWithGuid:(EDAMGuid)guid
-                           success:(void(^)(NSArray *tags))success
+                           success:(void(^)(NSArray<EDAMTag*> *tags))success
                            failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
@@ -287,7 +287,7 @@
 }
 
 - (void)untagAllWithGuid:(EDAMGuid)guid
-                 success:(void(^)())success
+                 success:(void(^)(void))success
                  failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncVoidBlock:^ {
@@ -306,7 +306,7 @@
 
 #pragma mark - NoteStore search methods
 
-- (void)listSearchesWithSuccess:(void(^)(NSArray *searches))success
+- (void)listSearchesWithSuccess:(void(^)(NSArray<EDAMSavedSearch*> *searches))success
                         failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
@@ -488,7 +488,7 @@ withResourcesAlternateData:(BOOL)withResourcesAlternateData
 }
 
 - (void)getNoteTagNamesWithGuid:(EDAMGuid)guid
-                        success:(void(^)(NSArray *names))success
+                        success:(void(^)(NSArray<NSString*> *names))success
                         failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
@@ -560,7 +560,7 @@ withResourcesAlternateData:(BOOL)withResourcesAlternateData
 }
 
 - (void)listNoteVersionsWithGuid:(EDAMGuid)guid
-                         success:(void(^)(NSArray *versions))success
+                         success:(void(^)(NSArray<EDAMNoteVersionId*> *versions))success
                          failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
@@ -727,7 +727,7 @@ withResourcesAlternateData:(BOOL)withResourcesAlternateData
     } success:success failure:failure];
 }
 
-- (void)listSharedNotebooksWithSuccess:(void(^)(NSArray *sharedNotebooks))success
+- (void)listSharedNotebooksWithSuccess:(void(^)(NSArray<EDAMSharedNotebook*> *sharedNotebooks))success
                                failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
@@ -762,7 +762,7 @@ withResourcesAlternateData:(BOOL)withResourcesAlternateData
     } success:success failure:failure];
 }
 
-- (void)listLinkedNotebooksWithSuccess:(void(^)(NSArray *linkedNotebooks))success
+- (void)listLinkedNotebooksWithSuccess:(void(^)(NSArray<EDAMLinkedNotebook*> *linkedNotebooks))success
                                failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
@@ -798,7 +798,7 @@ withResourcesAlternateData:(BOOL)withResourcesAlternateData
 }
 
 - (void)emailNoteWithParameters:(EDAMNoteEmailParameters *)parameters
-                        success:(void(^)())success
+                        success:(void(^)(void))success
                         failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncVoidBlock:^ {
@@ -816,7 +816,7 @@ withResourcesAlternateData:(BOOL)withResourcesAlternateData
 }
 
 - (void)stopSharingNoteWithGuid:(EDAMGuid)guid
-                        success:(void(^)())success
+                        success:(void(^)(void))success
                         failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncVoidBlock:^ {

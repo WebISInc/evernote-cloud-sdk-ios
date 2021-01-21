@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Niektóre polecenia były nieprawidłowe";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Nie udało się przydzielić pamięci";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "Wprowadzona nazwa użytkownika/hasło jest nieprawidłowe.";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Nie udało się odczytać danych";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Odnieś się do SecBase.h by uzyskać opis";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "Określony element już znajduje się w pęku kluczy";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "Interakcja użytkownika jest niedozwolona";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "Określony element nie został znaleziony w pęku kluczy";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Pęk kluczy jest niedostępny. Wymagane może być ponowne uruchomienie komputera";
+
+/* No comment provided by engineer. */
+"errSecParam" = "Jeden parametr lub więcej, które zostały przekazane funkcji był/y nieprawidłowy/e";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Funkcja lub operacja niezaimplementowana";
+

@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Einige der Argumente waren ungültig";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Failed to allocate memory";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "Der Benutzername oder das eingegebene Passwort ist nicht korrekt";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Unable to decode the provided data";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Refer to SecBase.h for description";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "Der spezifizierte Eintrag existiert bereits im Schlüsselbund";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "Nutzerinteraktion ist nicht erlaubt";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "Der spezifizierte Eintrag konnte im Schlüsselbund nicht gefunden werden";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Kein Schlüsselbund verfügbar. Sie müssen eventuell den Computer neu starten.";
+
+/* No comment provided by engineer. */
+"errSecParam" = "One or more parameters passed to a function were not valid";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Funktion oder Operation nicht implementiert";
+

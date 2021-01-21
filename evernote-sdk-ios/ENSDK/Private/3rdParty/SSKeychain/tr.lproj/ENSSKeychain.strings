@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Some of the arguments were invalid";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Failed to allocate memory";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "The user name or passphrase you entered is not correct";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Unable to decode the provided data";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Refer to SecBase.h for description";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "The specified item already exists in the keychain";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "User interaction is not allowed";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "The specified item could not be found in the keychain";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "No keychain is available. You may need to restart your computer";
+
+/* No comment provided by engineer. */
+"errSecParam" = "One or more parameters passed to a function were not valid";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Function or operation not implemented";
+

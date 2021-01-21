@@ -32,7 +32,7 @@
 
 // Permanent store of Evernote credentials.
 // Credentials are unique per (host,consumer key) tuple.
-@interface ENCredentialStore : NSObject <NSCoding>
+@interface ENCredentialStore : NSObject <NSSecureCoding>
 
 // Add credentials to the store.
 // Also saves the authentication token to the keychain.

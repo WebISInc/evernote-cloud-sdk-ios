@@ -98,6 +98,8 @@ typedef void (^ENNoteGenerateWebArchiveDataCompletionHandler)(NSData * data);
  */
 - (void)generateWebArchiveData:(ENNoteGenerateWebArchiveDataCompletionHandler)completion;
 
+#if !TARGET_OS_WATCH
+
 /**
  *  Class method to create and populate a note object from a loaded WebView of your content. The styled contents 
  *  of the DOM as currently loaded are captured into the content of the note. Remote images (i.e. in <img> tags) 
@@ -113,4 +115,7 @@ typedef void (^ENNoteGenerateWebArchiveDataCompletionHandler)(NSData * data);
  *  @param completion A prepopulated note object appropriate for upload.
  */
 + (void)populateNoteFromWebView:(CocoaWebView *)webView completion:(ENNotePopulateFromWebViewCompletionHandler)completion;
+
+#endif
 @end
+

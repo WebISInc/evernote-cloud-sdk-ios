@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"ENSSKeychainErrorBadArguments" = "Alcuni elementi sono invalidi";
+
+/* No comment provided by engineer. */
+"errSecAllocate" = "Tentativo di allocazione memoria non riuscito";
+
+/* No comment provided by engineer. */
+"errSecAuthFailed" = "Il nome utente o la frase che hai inserito non è corretta";
+
+/* No comment provided by engineer. */
+"errSecDecode" = "Impossibile decifrare i dati forniti";
+
+/* No comment provided by engineer. */
+"errSecDefault" = "Per la descrizione vai a SecBase.h";
+
+/* No comment provided by engineer. */
+"errSecDuplicateItem" = "L'elemento specificato è già presente nel portachiavi";
+
+/* No comment provided by engineer. */
+"errSecInteractionNotAllowed" = "Interazione utente non consentita";
+
+/* No comment provided by engineer. */
+"errSecItemNotFound" = "L'elemento specificato non è presente nel portachiavi";
+
+/* No comment provided by engineer. */
+"errSecNotAvailable" = "Nessun portachiavi disponibile. Prova a riavviare il tuo computer";
+
+/* No comment provided by engineer. */
+"errSecParam" = "Uno o più parametri passati nella funzione non sono validi";
+
+/* No comment provided by engineer. */
+"errSecUnimplemented" = "Funzione o operazione non implementata";
+
