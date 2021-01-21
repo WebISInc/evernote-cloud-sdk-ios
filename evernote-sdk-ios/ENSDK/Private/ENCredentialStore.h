@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 #import "ENCredentials.h"
 #import "ENSDKAdvanced.h"
 

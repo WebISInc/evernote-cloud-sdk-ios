@@ -42,12 +42,10 @@
 	if (self.label) {
 		[query setObject:self.label forKey:(__bridge id)kSecAttrLabel];
 	}
-#if __IPHONE_4_0 && TARGET_OS_IPHONE
 	CFTypeRef accessibilityType = [ENSSKeychain accessibilityType];
 	if (accessibilityType) {
 		[query setObject:(__bridge id)accessibilityType forKey:(__bridge id)kSecAttrAccessible];
 	}
-#endif
 	status = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
 
 	if (status != errSecSuccess && error != NULL) {
@@ -189,11 +187,9 @@
 		[dictionary setObject:self.account forKey:(__bridge id)kSecAttrAccount];
 	}
 
-#if __IPHONE_3_0 && TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
 	if (self.accessGroup) {
 		[dictionary setObject:self.accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
 	}
-#endif
 
 #ifdef ENSSKeychain_SYNCHRONIZATION_AVAILABLE
 	if ([[self class] isSynchronizationAvailable]) {

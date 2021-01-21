@@ -27,7 +27,13 @@
  */
 
 #import <Foundation/Foundation.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+typedef UIImage ENImage;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+typedef NSImage ENImage;
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -84,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return A resouce object instance.
  */
-- (id)initWithImage:(UIImage *)image;
+- (id)initWithImage:(ENImage *)image;
 
 /**
  *  Convenience function to get the ENML media tag for this resource

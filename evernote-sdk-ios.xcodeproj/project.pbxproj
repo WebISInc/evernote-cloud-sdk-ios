@@ -486,6 +486,8 @@
 		BECDD3651908DE2A003736EE /* NSDate+EDAMAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E23E818EBA5D500BD7E6E /* NSDate+EDAMAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BECDD3C8190A2DE7003736EE /* ENSDKResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BECDD3C6190A2DE7003736EE /* ENSDKResourceLoader.h */; };
 		BECDD3C9190A2DE7003736EE /* ENSDKResourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD3C7190A2DE7003736EE /* ENSDKResourceLoader.m */; };
+		CCAF0FA425BA111A00BF8C8D /* ENOAuthWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAF0FA125BA111A00BF8C8D /* ENOAuthWindowController.m */; };
+		CCAF0FA525BA111A00BF8C8D /* ENOAuthWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCAF0FA225BA111A00BF8C8D /* ENOAuthWindowController.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -694,6 +696,9 @@
 		BECDD2FB18F78072003736EE /* ENHTMLNoteContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENHTMLNoteContent.m; sourceTree = "<group>"; };
 		BECDD3C6190A2DE7003736EE /* ENSDKResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSDKResourceLoader.h; sourceTree = "<group>"; };
 		BECDD3C7190A2DE7003736EE /* ENSDKResourceLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSDKResourceLoader.m; sourceTree = "<group>"; };
+		CCAF0FA125BA111A00BF8C8D /* ENOAuthWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENOAuthWindowController.m; sourceTree = "<group>"; };
+		CCAF0FA225BA111A00BF8C8D /* ENOAuthWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENOAuthWindowController.h; sourceTree = "<group>"; };
+		CCAF0FA325BA111A00BF8C8D /* ENOAuthWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ENOAuthWindowController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -948,6 +953,9 @@
 		BE2E23F818EBA5D500BD7E6E /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				CCAF0FA225BA111A00BF8C8D /* ENOAuthWindowController.h */,
+				CCAF0FA125BA111A00BF8C8D /* ENOAuthWindowController.m */,
+				CCAF0FA325BA111A00BF8C8D /* ENOAuthWindowController.xib */,
 				BE2E23F918EBA5D500BD7E6E /* 3rdParty */,
 				BE2E244F18EBA5D500BD7E6E /* ENSDKPrivate.h */,
 				BE2E25DC18F4DCE600BD7E6E /* ENSDKPrivate.m */,
@@ -1198,6 +1206,7 @@
 				BE2E248218EBA5D500BD7E6E /* NSData+EvernoteSDK.h in Headers */,
 				BECDD3C8190A2DE7003736EE /* ENSDKResourceLoader.h in Headers */,
 				BE2E247C18EBA5D500BD7E6E /* ENXMLWriter.h in Headers */,
+				CCAF0FA525BA111A00BF8C8D /* ENOAuthWindowController.h in Headers */,
 				BECDD2FC18F78072003736EE /* ENHTMLNoteContent.h in Headers */,
 				BE2E249818EBA5D500BD7E6E /* ENGCOAuth.h in Headers */,
 				862CE9F81A757B5100D0DB23 /* ENSSKeychainQuery.h in Headers */,
@@ -1429,7 +1438,7 @@
 		0BB3D1A41524ED96001C4534 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1230;
 				ORGANIZATIONNAME = "Evernote Corporation";
 				TargetAttributes = {
 					6D9D60B61E27940A001740D8 = {
@@ -1441,10 +1450,9 @@
 			};
 			buildConfigurationList = 0BB3D1A71524ED96001C4534 /* Build configuration list for PBXProject "evernote-sdk-ios" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				"zh-cn",
 				Base,
@@ -1562,6 +1570,7 @@
 				BE2E24CA18EBA5D500BD7E6E /* ENHTMLtoENMLConverter.m in Sources */,
 				6D9D61C21E27B541001740D8 /* ENBusinessNoteStoreClient.m in Sources */,
 				BE48C6FF19102DD900025618 /* ENWebClipNoteBuilder.m in Sources */,
+				CCAF0FA425BA111A00BF8C8D /* ENOAuthWindowController.m in Sources */,
 				BE2E249D18EBA5D500BD7E6E /* KSForwardingWriter.m in Sources */,
 				BE2E24DD18EBA5D500BD7E6E /* NSString+ENScrubbing.m in Sources */,
 				BE2E24D318EBA5D500BD7E6E /* ENOAuthAuthenticator.m in Sources */,
@@ -1797,12 +1806,15 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1836,7 +1848,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
@@ -1852,12 +1864,15 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1883,7 +1898,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -1901,7 +1916,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_SHADOW = NO;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1919,7 +1934,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_SHADOW = NO;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1951,7 +1966,7 @@
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = EvernoteSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -1992,7 +2007,7 @@
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = EvernoteSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -2038,7 +2053,7 @@
 				);
 				INFOPLIST_FILE = "ENSDK/ENSDK-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
@@ -2084,7 +2099,7 @@
 				);
 				INFOPLIST_FILE = "ENSDK/ENSDK-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;

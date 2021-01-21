@@ -274,9 +274,16 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
      you want users to be able to register an Evernote account from your app
  *  @param completion           A block to receive the result of the operation (an error if there was one).
  */
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)authenticateWithWindow:(NSWindow *)window
+			preferRegistration:(BOOL)preferRegistration
+					completion:(ENSessionAuthenticateCompletionHandler)completion;
+#elif TARGET_OS_IPHONE
 - (void)authenticateWithViewController:(UIViewController *)viewController
-                    preferRegistration:(BOOL)preferRegistration
-                            completion:(ENSessionAuthenticateCompletionHandler)completion;
+					preferRegistration:(BOOL)preferRegistration
+							completion:(ENSessionAuthenticateCompletionHandler)completion;
+
+#endif
 
 /**
  *  Unauthenticate the current user.

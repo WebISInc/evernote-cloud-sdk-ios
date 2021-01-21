@@ -11,15 +11,25 @@
 @implementation ENCommonUtils
 
 BOOL IsIOS8() {
-    if([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
-        return YES;
-    }else {
-        return NO;
-    }
+	
+#if TARGET_OS_IPHONE
+	if([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+		return YES;
+	}else {
+		return NO;
+	}
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	return YES;
+#endif
 }
 
 BOOL IsEvernoteInstalled() {
-    return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"en://"]];
+#if TARGET_OS_IPHONE
+	return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"en://"]];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	NSString *path = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:@"com.evernote.Evernote"];
+	return path != nil;
+#endif
 }
 
 @end

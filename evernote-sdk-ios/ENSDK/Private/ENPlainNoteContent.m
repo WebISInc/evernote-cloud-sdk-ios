@@ -75,8 +75,8 @@
                 [writer endElement];
             }
         }
-        if ([obj isKindOfClass:[UIImage class]]) {
-            UIImage *imageObj = (UIImage *)obj;
+        if ([obj isKindOfClass:[ENImage class]]) {
+            ENImage *imageObj = (ENImage *)obj;
             ENResource *newResource = [[ENResource alloc] initWithImage:imageObj];
             [resourcesToAppend addObject:newResource];
             [writer writeResourceWithDataHash:newResource.dataHash mime:newResource.mimeType attributes:nil];
