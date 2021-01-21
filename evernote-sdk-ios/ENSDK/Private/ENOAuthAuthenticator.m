@@ -318,7 +318,7 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     
     if (deviceIdentifier == nil) {
         // Alternatively we could try ethernet mac address...
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        NSUserDefaults *userDefaults = [PIDefaultKeys sharedGroupDefaults];
         NSString *edamUUID = [userDefaults objectForKey:@"EDAMHTTPClientUUID"];
         if (edamUUID == nil) {
             CFUUIDRef uuidRef = CFUUIDCreate(NULL);
@@ -443,8 +443,8 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     if ([self.response respondsToSelector:@selector(statusCode)]) {
         NSInteger statusCode = [(id)self.response statusCode];
         if (statusCode != 200) {
-            NSLog(@"Received error HTTP response code: %ld", (long)statusCode);
-            NSLog(@"%@", string);
+					[PILog error:[NSString stringWithFormat:@"Received error HTTP response code: %ld", (long)statusCode]];
+					[PILog error:[NSString stringWithFormat:@"%@", string]];
             NSDictionary* userInfo = nil;
             if(statusCode) {
                 NSNumber* statusCodeNumber = [NSNumber numberWithInteger:statusCode];
@@ -484,20 +484,27 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
             self.isMultitaskLoginDisabled = YES;
         }
         [self verifyCFBundleURLSchemes];
-        if ([device respondsToSelector:@selector(isMultitaskingSupported)] &&
-            [device isMultitaskingSupported] &&
-            self.isMultitaskLoginDisabled==NO) {
-            self.state = ENOAuthAuthenticatorStateInProgress;
-            NSString* openURL = [NSString stringWithFormat:@"en://link-sdk/consumerKey/%@/profileName/%@/authorization/%@",self.consumerKey,self.currentProfile,parameters[@"oauth_token"]];
-            BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:openURL]];
-            if(success == NO) {
-                // The Evernote app does not support the full URL, falling back
-                self.isMultitaskLoginDisabled = YES;
-                // Restart oAuth dance
-                [self startOauthAuthentication];
-            }
-        }
-        else {
+		
+		//Commenting this out for now because after doing a round trip through Evernote, it's coming back to PI4 instead of I5.
+		//We would have to change an App ID on evernote's side and even then, there was a technical issue with that last I talked to Alex.
+		//By commenting this out, we force it to log in via the web controller below
+		
+//        if ([device respondsToSelector:@selector(isMultitaskingSupported)] &&
+//            [device isMultitaskingSupported] &&
+//            self.isMultitaskLoginDisabled==NO) {
+//            self.state = ENOAuthAuthenticatorStateInProgress;
+//            NSString* openURL = [NSString stringWithFormat:@"en://link-sdk/consumerKey/%@/profileName/%@/authorization/%@",self.consumerKey,self.currentProfile,parameters[@"oauth_token"]];
+//			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:openURL] options:@{} completionHandler: ^(BOOL success) {
+//				if(success == NO) {
+//					// The Evernote app does not support the full URL, falling back
+//					self.isMultitaskLoginDisabled = YES;
+//					// Restart oAuth dance
+//					[self startOauthAuthentication];
+//				}
+//			}];
+//        }
+//        else
+		{
             // Open a modal ENOAuthViewController on top of our given view controller,
             // and point it at the proper Evernote web page so the user can authorize us.
             NSString *userAuthURLString = [self userAuthorizationURLStringWithParameters:parameters];

@@ -29,7 +29,7 @@
 #import <Foundation/Foundation.h>
 #import "EDAM.h"
 
-@interface ENCredentials : NSObject <NSCoding>
+@interface ENCredentials : NSObject <NSSecureCoding>
 
 @property (nonatomic, copy) NSString *host;
 @property (nonatomic, copy) NSString *edamUserId;

@@ -31,7 +31,11 @@
 #import "ENSDKAdvanced.h"
 #import "ENMLConstants.h"
 
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
+# import <MobileCoreServices/MobileCoreServices.h>
+#else
 # import <CoreServices/CoreServices.h>
+#endif
 
 
 @implementation ENMIMEUtils

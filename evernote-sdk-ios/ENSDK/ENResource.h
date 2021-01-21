@@ -99,6 +99,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly, nonatomic) NSString *mediaTag;
 
+/**
+ *  Convenience function to get the EDAMResource version
+ *
+ *  @return EDAMResource
+ */
+- (EDAMResource * _Nullable)EDAMResource;
 @end
 
 NS_ASSUME_NONNULL_END
