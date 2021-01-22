@@ -6,11 +6,16 @@
 //  Copyright (c) 2014 Evernote Corporation. All rights reserved.
 //
 
+
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#endif
 
 @interface ENCommonUtils : NSObject
 
-BOOL IsIOS8();
-BOOL IsEvernoteInstalled();
+BOOL IsIOS8(void);
+BOOL IsEvernoteInstalled(void);
 
 @end

@@ -26,7 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 #import "EvernoteSDK.h"
 @class ENSaveToEvernoteViewController;
 
@@ -39,3 +42,5 @@
 @interface ENSaveToEvernoteViewController : UIViewController
 @property (nonatomic, weak) id<ENSendToEvernoteViewControllerDelegate> delegate;
 @end
+
+#endif

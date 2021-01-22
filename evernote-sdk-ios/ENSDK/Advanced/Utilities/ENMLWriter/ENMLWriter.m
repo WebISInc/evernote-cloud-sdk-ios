@@ -95,7 +95,7 @@
     [hrefAuthority appendFormat: @"%@", [url port]];
   }
   
-  if (![authority enIsEqualToStringOrNil: hrefAuthority]) {
+  if (![authority enIsEqualToStringWithEmptyEqualToNull: hrefAuthority]) {
     NSLog(@"Authority '%@' does not match authority '%@'", authority, hrefAuthority);
     result = NO;
   }

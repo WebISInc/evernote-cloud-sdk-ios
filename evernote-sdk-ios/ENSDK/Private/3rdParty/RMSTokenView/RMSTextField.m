@@ -8,6 +8,8 @@
 
 #import "RMSTextField.h"
 
+#if TARGET_OS_IPHONE
+
 @implementation RMSTextField
 
 // http://stackoverflow.com/questions/25354467/detect-backspace-in-uitextfield-in-ios8
@@ -40,3 +42,6 @@
 }
 
 @end
+
+
+#endif

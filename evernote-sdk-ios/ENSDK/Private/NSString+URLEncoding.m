@@ -31,18 +31,12 @@
 @implementation NSString (URLEncoding)
 - (NSString *)en_stringByUrlEncoding
 {
-    return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
-                                                                                 (CFStringRef)self,
-                                                                                 NULL,
-                                                                                 (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
-                                                                                 kCFStringEncodingUTF8));
+	return [self stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"!*'\"();:@&=+$,/?%#[]% "] invertedSet]];
+
 }
 
 - (NSString *)en_stringByUrlDecoding
 {
-	return (NSString *)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
-                                                                                                 (CFStringRef)self,
-                                                                                                 CFSTR(""),
-                                                                                                 kCFStringEncodingUTF8));
+	return [self stringByRemovingPercentEncoding];
 }
 @end

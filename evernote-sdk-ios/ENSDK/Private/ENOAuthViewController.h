@@ -26,7 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
 @class ENOAuthViewController;
 
@@ -50,3 +53,5 @@
 - (void)updateUIForNewProfile:(NSString*)newProfile withAuthorizationURL:(NSURL*)authURL;
 
 @end
+
+#endif

@@ -28,6 +28,7 @@
 
 #import "ENPreferencesStore.h"
 #import "ENSDKPrivate.h"
+#import "evernote_sdk_ios-Swift.h"
 
 static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.plist";
 
@@ -37,17 +38,58 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
 @end
 
 @implementation ENPreferencesStore
+#if TARGET_OS_IPHONE || TARGET_OS_WATCH || TARGET_OS_TV
 + (NSString *)pathnameForStoreFilename:(NSString *)filename
 {
-    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    return [[paths[0] stringByAppendingPathComponent:@"Preferences"] stringByAppendingPathComponent:filename];
+	NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+	return [[paths[0] stringByAppendingPathComponent:@"Preferences"] stringByAppendingPathComponent:filename];
 }
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+
+//Apple's standard migration gets the file from the general preferences folder into this folder (which is the Library/Containers folder for the helper).  However, we need to get this file into the Group Containers folder so main app + helper can play with it.  That happens in migratePrefsToSandboxIfNecessary.  This method just gives us the path to the interim place where Apple moves it.
++ (NSString *)_legacyInterimPathnameForStoreFilename:(NSString *)filename
+{
+	NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+	NSString *prefPath = [[paths[0] stringByAppendingPathComponent:@"Preferences"] stringByAppendingPathComponent:filename];
+//	DDLogVerbose(@"Evernote: _legacyInterimPathnameForStoreFilename:  %@", prefPath);
+	return prefPath;
+}
+#endif  //elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+
+
+
+//In 1.0.2, we Sandboxed the helper.  We have the custom Sandbox migration process handling the migration of the evernote login prefs to the app sandbox, but now we need to move it to the Group Container where it can be used by main app + helper.
+//I couldn't find a way with the custom sandbox migration to migrate straight into the Group Container, so we rely on this as part 2 of a 2 step process
+#if TARGET_NAME_InformantHelper
++ (void)migratePrefsToSandboxIfNecessary
+{
+	NSString *legacyEvernotePath = [self _legacyInterimPathnameForStoreFilename: ENPreferencesStoreFilename];
+	NSString *newPath = [self pathnameForStoreFilename: ENPreferencesStoreFilename];
+	NSFileManager *fileMng = [NSFileManager defaultManager];
+	if([fileMng fileExistsAtPath:legacyEvernotePath] && ![fileMng fileExistsAtPath: newPath])
+	{
+		//if we get here, that means the user was using Informant 1.0 (non-MAS), set up an Evernote sync account, and now they are launching 1.0.2+ for the first time.
+		__autoreleasing NSError *error = nil;
+		if([fileMng moveItemAtPath:legacyEvernotePath toPath:newPath error:&error])
+		{
+			[PILog info:@"Evernote migrated to sandbox"];
+		} else {
+			[PILog error:[NSString stringWithFormat:@"Error migrating Evernote to Sandbox: %@", error]];
+		}
+	} else {
+		BOOL oldFileExists = [fileMng fileExistsAtPath:legacyEvernotePath];
+		BOOL newFileExists = [fileMng fileExistsAtPath: newPath];
+		[PILog info:[NSString stringWithFormat:@"Evernote migration not necessary (old: %@ / new: %@)", (oldFileExists ? @"YES" : @"NO"), (newFileExists ? @"YES" : @"NO")]];
+	}
+}
+#endif
 
 - (id)initWithStoreFilename:(NSString *)filename
 {
     self = [super init];
     if (self) {
-        self.pathname = [[self class] pathnameForStoreFilename:filename];
+        self.pathname = [ENSession pathnameForStoreFilename](filename);
         [self load];
     }
     return self;
@@ -111,8 +153,9 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
     id object = nil;
     @try {
         object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+			[ENSession.globalLogger evernoteLogInfoString:[NSString stringWithFormat:@"Evernote: ENPreferenceStore decodedObjectForKey OBJECT: %@", object]];
     } @catch(id e) {
-        NSLog(@"ENPreferencesStore: Error unarchiving object for key %@ : %@", key, e);
+			[ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Error unarchiving object for key %@ : %@", key, e]];
         // DON'T nuke whatever object this is, maybe the called called the wrong
         // getter.
     }
@@ -126,7 +169,7 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
     @try {
         data = [NSKeyedArchiver archivedDataWithRootObject:object];
     } @catch(id e) {
-        NSLog(@"ENPreferencesStore: Error archiving object of root class %@ : %@", [object class], e);
+        [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Error archiving object of root class %@ : %@", [object class], e]];
     }
     if (data) {
         @synchronized(self) {
@@ -145,11 +188,11 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
     NSError * error = nil;
     NSData * data = [NSPropertyListSerialization dataWithPropertyList:store format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
     if (!data) {
-        NSLog(@"ENPreferencesStore: Error serializing prefs store. %@", error);
+        [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Error serializing prefs store. %@", error]];
     }
     if (data) {
         if (![data writeToFile:self.pathname options:NSDataWritingAtomic error:&error]) {
-            NSLog(@"ENPreferencesStore: Error writing prefs store. %@", error);
+            [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Error writing prefs store. %@", error]];
         }
     }
 }
@@ -173,7 +216,7 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
         prefs = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListMutableContainers format:&format error:&error];
         if (!prefs || format != NSPropertyListXMLFormat_v1_0) {
             // File was there but failed to deserialize. That's worth logging.
-            NSLog(@"ENPreferencesStore: Failed to open preferences store at %@: %@", self.pathname, error);
+            [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Failed to open preferences store at %@: %@", self.pathname, error]];
             prefs = nil;
         }
     }

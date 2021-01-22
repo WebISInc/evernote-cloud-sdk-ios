@@ -41,6 +41,7 @@
 #import "NSString+URLEncoding.h"
 #import "ENShareURLHelper.h"
 #import "ENCommonUtils.h"
+#import "evernote_sdk_ios-Swift.h"
 
 // Strings visible publicly.
 NSString * const ENSessionHostSandbox = @"sandbox.evernote.com";
@@ -60,9 +61,6 @@ static NSString * ENSessionPreferencesLinkedAppNotebook = @"LinkedAppNotebook";
 static NSString * ENSessionPreferencesSharedAppNotebook = @"SharedAppNotebook";
 
 static NSUInteger ENSessionNotebooksCacheValidity = (5 * 60);   // 5 minutes
-
-@interface ENSessionDefaultLogger : NSObject <ENSDKLogging>
-@end
 
 @interface ENSessionListNotebooksContext : NSObject
 @property (nonatomic, strong) NSMutableArray * resultNotebooks;
@@ -211,7 +209,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     
     NSString * error = @"Cannot create shared Evernote session without either a valid consumer key/secret pair, or a developer token set";
     // Use NSLog and not the session logger here, or we'll deadlock since we're still creating the session.
-    NSLog(@"%@", error);
+    NSLog(@"ENSession Error: %@", error);
     [NSException raise:NSInvalidArgumentException format:@"%@", error];
     return NO;
 }
@@ -299,7 +297,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     } else {
         // Choose the initial host based on locale. Simplified Chinese locales get the yinxiang service.
         NSString * locale = [[[NSLocale currentLocale] localeIdentifier] lowercaseString];
-        if ([locale hasPrefix:@"zh-hans"] || [locale isEqualToString:@"zh-cn"] || [locale isEqualToString:@"zh"]) {
+        if ([locale hasPrefix:@"zh-hans"] || [locale isEqualToString:@"zh-cn"] || [locale isEqualToString:@"zh"]|| [locale isEqualToString:@"zh_cn"]) {
             self.sessionHost = ENSessionBootstrapServerBaseURLStringCN;
         } else {
             self.sessionHost = ENSessionBootstrapServerBaseURLStringUS;
@@ -307,9 +305,17 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     }
 }
 
+#if TARGET_OS_IPHONE
 - (void)authenticateWithViewController:(UIViewController *)viewController
-                    preferRegistration:(BOOL)preferRegistration
-                            completion:(ENSessionAuthenticateCompletionHandler)completion
+					preferRegistration:(BOOL)preferRegistration
+							completion:(ENSessionAuthenticateCompletionHandler)completion
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)authenticateWithWindow:(NSWindow *)window
+			preferRegistration:(BOOL)preferRegistration
+					completion:(ENSessionAuthenticateCompletionHandler)completion;
+
+#endif
 {
     if (!completion) {
         [NSException raise:NSInvalidArgumentException format:@"handler required"];
@@ -354,7 +360,11 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     // web auth only.
     self.authenticator.useWebAuthenticationOnly = (SessionHostOverride != nil);
     
-    [self.authenticator authenticateWithViewController:viewController];
+#if TARGET_OS_IPHONE
+	[self.authenticator authenticateWithViewController:viewController];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	[self.authenticator authenticateFromWindow:window];
+#endif
 }
 
 - (void)performPostAuthentication
@@ -516,6 +526,13 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     [self selectInitialSessionHost];
     
     [self notifyAuthenticationChanged];
+	
+#ifdef MAIN_APP_TARGET
+	//if this is the main app, also send these credentials to the helper
+	[[PIDistributedController sharedInstance] sendDistributedNotification:NO xpcClosure:^(id proxyObject) {
+		[proxyObject xpc_evernoteAuthenticateStateChange];
+	}];
+#endif
 }
 
 - (BOOL)handleOpenURL:(NSURL *)url
@@ -1615,11 +1632,17 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         NSURLResponse * response = nil;
         NSError * error = nil;
         NSData * thumbnailData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-        UIImage * thumbnail = nil;
+        ENImage * thumbnail = nil;
         if (!thumbnailData) {
             ENSDKLogError(@"Failed to get thumb data at url %@", urlString);
         } else {
-            thumbnail = [UIImage imageWithData:thumbnailData];
+			
+#if TARGET_OS_IPHONE
+			thumbnail = [ENImage imageWithData:thumbnailData];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+			thumbnail = [[ENImage alloc] initWithData:thumbnailData];
+#endif
+			
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (thumbnail) {
@@ -1642,8 +1665,13 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         return NO;
     }
     
-    NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid];
-    return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme]];
+#if TARGET_OS_IPHONE
+	NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid];
+	return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme]];
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	return NO;
+#endif
 }
 
 - (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef callbackURL:(NSString *)callbackURL {
@@ -1651,8 +1679,12 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         return NO;
     }
     
+#if TARGET_OS_IPHONE
     NSString *viewNoteURLScheme = [NSString stringWithFormat:@"evernote:///view/%d/%@/%@/%@/?callback=%@", self.userID, [self shardIdForNoteRef:noteRef], noteRef.guid, noteRef.guid, [callbackURL en_stringByUrlEncoding]];
     return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:viewNoteURLScheme]];
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	return NO;
+#endif
 }
 
 #pragma mark - Private routines
@@ -1750,7 +1782,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     if (!_userStore && self.primaryAuthenticationToken) {
         _userStore = [ENUserStoreClient userStoreClientWithUrl:[self userStoreUrl] authenticationToken:self.primaryAuthenticationToken];
     }
-    return _userStore;
+   return _userStore;
 }
 
 - (ENNoteStoreClient *)primaryNoteStore
@@ -1765,6 +1797,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
             }
         }
     }
+
     return _primaryNoteStore;
 }
 
@@ -1775,7 +1808,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         client.delegate = self;
         _businessNoteStore = client;
     }
-    return _businessNoteStore;
+   return _businessNoteStore;
 }
 
 - (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
@@ -1783,6 +1816,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     ENLinkedNotebookRef * linkedNotebookRef = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:linkedNotebook];
     ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:linkedNotebookRef];
     linkedClient.delegate = self;
+
     return linkedClient;
 }
 
@@ -1795,7 +1829,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     } else if (noteRef.type == ENNoteRefTypeShared) {
         ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:noteRef.linkedNotebook];
         linkedClient.delegate = self;
-        return linkedClient;
+		return linkedClient;
     }
     return nil;
 }
@@ -1940,10 +1974,18 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         [self.preferences setObject:@YES forKey:ENSessionPreferencesAppNotebookIsLinked];
     }
     [self performPostAuthentication];
+	
+#ifdef MAIN_APP_TARGET
+	//if this is the main app, also send these credentials to the helper
+	[[PIDistributedController sharedInstance] sendDistributedNotification:NO xpcClosure:^(id proxyObject) {
+		[proxyObject xpc_evernoteAuthenticateStateChange];
+	}];
+#endif
 }
 
 - (void)authenticatorDidFailWithError:(NSError *)error
 {
+    [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Evernote Authentication Error: %@", [error description]]];
     [self completeAuthenticationWithError:error];
 }
 
@@ -1987,12 +2029,12 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
 @implementation ENSessionDefaultLogger
 - (void)evernoteLogInfoString:(NSString *)str;
 {
-    NSLog(@"ENSDK: %@", str);
+    [ENSession.globalLogger evernoteLogInfoString:[NSString stringWithFormat:@"ENSDK: %@", str]];
 }
 
 - (void)evernoteLogErrorString:(NSString *)str;
 {
-    NSLog(@"ENSDK ERROR: %@", str);
+    [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENSDK ERROR: %@", str]];
 }
 @end
 

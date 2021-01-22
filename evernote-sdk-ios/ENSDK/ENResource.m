@@ -75,11 +75,25 @@
     return [self initWithData:data mimeType:mimeType filename:nil];
 }
 
-- (id)initWithImage:(UIImage *)image
+- (id)initWithImage:(ENImage *)image
 {
-    // Encode both ways and use the smaller of the two. Ties goes to (lossless) PNG.
-    NSData * pngData = UIImagePNGRepresentation(image);
-    NSData * jpegData = UIImageJPEGRepresentation(image, 0.7);
+#if TARGET_OS_IPHONE
+	// Encode both ways and use the smaller of the two. Ties goes to (lossless) PNG.
+	NSData * pngData = UIImagePNGRepresentation(image);
+	NSData * jpegData = UIImageJPEGRepresentation(image, 0.7);
+
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+	// Encode both ways and use the smaller of the two. Ties goes to (lossless) PNG.
+
+	[image lockFocus];
+	NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, image.size.width, image.size.height)];
+	[image unlockFocus];
+	
+	NSData * pngData = [bitmapRep representationUsingType:NSPNGFileType properties:@{}];
+	NSData * jpegData = [bitmapRep representationUsingType:NSJPEGFileType properties:@{NSImageCompressionFactor:@(.7)}];
+
+#endif
+
     if (jpegData.length < pngData.length) {
         pngData = nil;
         return [self initWithData:jpegData mimeType:[EDAMLimitsConstants EDAM_MIME_TYPE_JPEG]];

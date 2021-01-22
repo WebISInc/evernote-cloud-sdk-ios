@@ -5,6 +5,8 @@
 // To change the template use AppCode | Preferences | File Templates.
 //
 
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
 @class RMSTokenView;
 
@@ -24,3 +26,5 @@
 - (void)updateConstraintsForTokenLines:(NSArray *)tokenLines andLineView:(UIView *)lineView withTextFieldFocus:(BOOL)textFieldHasFocus isSearching:(BOOL)isSearching;
 
 @end
+
+#endif

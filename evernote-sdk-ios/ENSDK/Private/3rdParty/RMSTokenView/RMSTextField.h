@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 RoleModel Software. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
 
 @protocol BackspaceDelegate <NSObject>
@@ -20,3 +22,6 @@
 @interface RMSTextField : UITextField
 @property (nonatomic, weak) id<BackspaceDelegate>backspaceDelegate;
 @end
+
+
+#endif

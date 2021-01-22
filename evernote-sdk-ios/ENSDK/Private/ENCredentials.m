@@ -30,6 +30,7 @@
 #import "ENSession.h"
 #import "ENSDKPrivate.h"
 #import "ENSSKeychain.h"
+#import "evernote_sdk_ios-Swift.h"
 
 @interface ENCredentials()
 
@@ -84,7 +85,7 @@ authenticationResult:(EDAMAuthenticationResult *)authenticationResult
 
     BOOL success = [query save:&error];
     if (!success) {
-        NSLog(@"Error saving to keychain: %@ %ld", error, (long)error.code);
+        [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Error saving to keychain: %@ %ld", error, (long)error.code]];
         return NO;
     } 
     return YES;
@@ -103,7 +104,7 @@ authenticationResult:(EDAMAuthenticationResult *)authenticationResult
 
     NSString *token = [query password];
     if (!token) {
-        NSLog(@"Error getting password from keychain: %@", error);
+        [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Error getting password from keychain: %@", error]];
     }
     return token;
 }
@@ -128,7 +129,7 @@ authenticationResult:(EDAMAuthenticationResult *)authenticationResult
 
 -(ENSSKeychainQuery*) keychainQuery
 {
-    [ENSSKeychain setAccessibilityType:kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly];
+    [ENSSKeychain setAccessibilityType:kSecAttrAccessibleAfterFirstUnlock];
     ENSSKeychainQuery *query = [[ENSSKeychainQuery alloc] init];
     query.service = self.host;
     query.account = self.edamUserId;
@@ -150,13 +151,18 @@ authenticationResult:(EDAMAuthenticationResult *)authenticationResult
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if((self = [super init])) {
-        self.host = [decoder decodeObjectForKey:@"host"];
-        self.edamUserId = [decoder decodeObjectForKey:@"edamUserId"];
-        self.noteStoreUrl = [decoder decodeObjectForKey:@"noteStoreUrl"];
-        self.webApiUrlPrefix = [decoder decodeObjectForKey:@"webApiUrlPrefix"];
-        self.expirationDate = [decoder decodeObjectForKey:@"expirationDate"];
+		self.host = [decoder decodeObjectOfClass:[NSString class] forKey:@"host"];
+        self.edamUserId = [decoder decodeObjectOfClass:[NSString class] forKey:@"edamUserId"];
+        self.noteStoreUrl = [decoder decodeObjectOfClass:[NSString class] forKey:@"noteStoreUrl"];
+        self.webApiUrlPrefix = [decoder decodeObjectOfClass:[NSString class] forKey:@"webApiUrlPrefix"];
+        self.expirationDate = [decoder decodeObjectOfClass:[NSDate class] forKey:@"expirationDate"];
     }
     return self;
+}
+
++ (BOOL)supportsSecureCoding
+{
+	return YES;
 }
 
 @end

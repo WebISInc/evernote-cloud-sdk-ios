@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+
 #import "ENSaveToEvernoteActivity.h"
 #import "ENSaveToEvernoteViewController.h"
 #import "EvernoteSDK.h"
@@ -54,7 +56,7 @@
 
 - (UIImage *)activityImage
 {
-    return [UIImage imageNamed:@"ENSDKResources.bundle/ENActivityIcon"];
+    return [UIImage imageNamed:@"ENSDKResources.bundle/ENActivityIcon" inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
 }
 
 - (BOOL)canPerformWithActivityItems:(NSArray *)activityItems
@@ -164,3 +166,5 @@
     }
 }
 @end
+
+#endif

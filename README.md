@@ -15,10 +15,14 @@ pod 'EvernoteSDK', '~> 3.0'
 
 Drag & Drop `evernote-sdk-ios.xcodeproj` into your project.
 
-Now open your target's `Build Phases` and add the following items to your `Link Binary With Libraries` section:
+Now open your target's `Build Phases` and add the following items to your `Embed Frameworks` section:
 
 - EvernoteSDKiOS.framework
+
+and add the following items to your `Link Binary With Libraries` section:
+
 - MobileCoreServices.framework
+- CoreServices.framework
 - libxml2.dylib
 
 ## Configuration

@@ -8,6 +8,7 @@
 
 #import "ENSSKeychainQuery.h"
 #import "ENSSKeychain.h"
+#import "evernote_sdk_ios-Swift.h"
 
 @implementation ENSSKeychainQuery
 
@@ -37,22 +38,30 @@
 
 	[self deleteItem:nil];
 
+#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+	
+	[[ENSession keychain] setSharedStringService:self.service description:nil synchronizable:NO];
+	
+	[[ENSession keychain] setData:self.passwordData forKey:self.account error:error];
+
+	status = error == nil;
+	
+#else
 	NSMutableDictionary *query = [self query];
 	[query setObject:self.passwordData forKey:(__bridge id)kSecValueData];
 	if (self.label) {
 		[query setObject:self.label forKey:(__bridge id)kSecAttrLabel];
 	}
-#if __IPHONE_4_0 && TARGET_OS_IPHONE
 	CFTypeRef accessibilityType = [ENSSKeychain accessibilityType];
 	if (accessibilityType) {
 		[query setObject:(__bridge id)accessibilityType forKey:(__bridge id)kSecAttrAccessible];
 	}
-#endif
 	status = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
 
 	if (status != errSecSuccess && error != NULL) {
 		*error = [[self class] errorWithCode:status];
 	}
+#endif
 
 	return (status == errSecSuccess);
 }
@@ -68,7 +77,7 @@
 	}
 
 	NSMutableDictionary *query = [self query];
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	status = SecItemDelete((__bridge CFDictionaryRef)query);
 #else
 	CFTypeRef result = NULL;
@@ -164,7 +173,7 @@
 
 #ifdef ENSSKeychain_SYNCHRONIZATION_AVAILABLE
 + (BOOL)isSynchronizationAvailable {
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 	// Apple suggested way to check for 7.0 at runtime
 	// https://developer.apple.com/library/ios/documentation/userexperience/conceptual/transitionguide/SupportingEarlieriOS.html
 	return floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1;
@@ -189,11 +198,9 @@
 		[dictionary setObject:self.account forKey:(__bridge id)kSecAttrAccount];
 	}
 
-#if __IPHONE_3_0 && TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
 	if (self.accessGroup) {
 		[dictionary setObject:self.accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
 	}
-#endif
 
 #ifdef ENSSKeychain_SYNCHRONIZATION_AVAILABLE
 	if ([[self class] isSynchronizationAvailable]) {
@@ -228,7 +235,7 @@
 		case errSecSuccess: return nil;
 		case ENSSKeychainErrorBadArguments: message = NSLocalizedStringFromTable(@"ENSSKeychainErrorBadArguments", @"ENSSKeychain", nil); break;
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 		case errSecUnimplemented: {
 			message = NSLocalizedStringFromTable(@"errSecUnimplemented", @"ENSSKeychain", nil);
 			break;

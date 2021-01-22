@@ -10,6 +10,8 @@
 #import "ENTheme.h"
 #import "ENSDKPrivate.h"
 
+#if TARGET_OS_IPHONE
+
 extern CGFloat kTextLeftPadding;
 CGFloat kLabelButtonSpace = 10.0;
 
@@ -50,3 +52,5 @@ CGFloat kLabelButtonSpace = 10.0;
 }
 
 @end
+
+#endif

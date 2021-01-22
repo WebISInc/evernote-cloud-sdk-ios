@@ -53,4 +53,5 @@
  *  @param str String to log.
  */
 - (void)evernoteLogErrorString:(NSString *)str;
+
 @end

@@ -643,7 +643,7 @@ didReceiveResponse:(NSURLResponse *)response
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {
-    ENAFURLConnectionOperation *operation = [[[self class] allocWithZone:zone] initWithRequest:self.request];
+    ENAFURLConnectionOperation *operation = [(ENAFURLConnectionOperation*)[[self class] allocWithZone:zone] initWithRequest:self.request];
             
     operation.uploadProgress = self.uploadProgress;
     operation.downloadProgress = self.downloadProgress;

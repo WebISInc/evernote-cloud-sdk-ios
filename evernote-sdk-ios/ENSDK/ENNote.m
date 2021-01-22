@@ -159,7 +159,7 @@
     // note was not captured from a web page), then just make one up. In this case we use a dummy hostname, and just use the
     // resource's hash as a fake filename with an appropriate extension.
     //
-    // This would be cleaner if we didn't require the totally fake hostname, but using any non-absolute path here confuses UIWebView.
+    // This would be cleaner if we didn't require the totally fake hostname, but using any non-absolute path here confuses WKWebView.
     //
     NSMutableArray * edamResources = [NSMutableArray arrayWithCapacity:self.resources.count];
     for (ENResource * resource in self.resources) {
@@ -211,7 +211,8 @@
     }];
 }
 
-+ (void)populateNoteFromWebView:(UIWebView *)webView completion:(ENNotePopulateFromWebViewCompletionHandler)completion
+#if !TARGET_OS_WATCH
++ (void)populateNoteFromWebView:(WKWebView *)webView completion:(ENNotePopulateFromWebViewCompletionHandler)completion
 {
     if (!completion) {
         ENSDKLogError(@"+populateNoteFromWebView requires a valid completion block");
@@ -227,6 +228,7 @@
     // The note builder's completion handler has the same signature and behavior as our own, so pass it directly through.
     [builder buildNote:completion];
 }
+#endif
 
 #pragma mark - Protected methods
 

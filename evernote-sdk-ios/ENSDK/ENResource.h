@@ -27,9 +27,17 @@
  */
 
 #import <Foundation/Foundation.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+typedef UIImage ENImage;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+typedef NSImage ENImage;
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class EDAMResource;
 
 /**
  *  This class represents a resource attached to an Evernote note. A resource is often an image,
@@ -84,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return A resouce object instance.
  */
-- (id)initWithImage:(UIImage *)image;
+- (id)initWithImage:(ENImage *)image;
 
 /**
  *  Convenience function to get the ENML media tag for this resource
@@ -93,6 +101,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly, nonatomic) NSString *mediaTag;
 
+/**
+ *  Convenience function to get the EDAMResource version
+ *
+ *  @return EDAMResource
+ */
+- (EDAMResource * _Nullable)EDAMResource;
 @end
 
 NS_ASSUME_NONNULL_END
