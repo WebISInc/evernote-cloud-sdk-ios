@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "ENSDKLogging.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -456,3 +457,6 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
 @end
 
 NS_ASSUME_NONNULL_END
+
+@interface ENSessionDefaultLogger : NSObject <ENSDKLogging>
+@end

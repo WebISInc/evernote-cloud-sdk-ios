@@ -28,6 +28,7 @@
 
 #import "ENCredentialStore.h"
 #import "ENSDKPrivate.h"
+#import "evernote_sdk_ios-Swift.h"
 
 #define DEFAULTS_CREDENTIAL_STORE_KEY @"EvernoteCredentials"
 
@@ -109,7 +110,7 @@
 
 + (ENCredentialStore *)loadCredentialsFromAppDefaults
 {
-    NSUserDefaults *defaults = [PIDefaultKeys sharedGroupDefaults];
+    NSUserDefaults *defaults = [ENSession userDefaults];
     NSData *data = [defaults objectForKey:DEFAULTS_CREDENTIAL_STORE_KEY];
     ENCredentialStore *store = nil;
     if (data) {
@@ -120,7 +121,7 @@
             // Deal with things like NSInvalidUnarchiveOperationException
             // just return nil for situations like this, and the caller
             // can create and save a new credentials store.
-					[PILog error:[NSString stringWithFormat:@"Exception unarchiving ENCredentialStore: %@", exception]];
+            [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Exception unarchiving ENCredentialStore: %@", exception]];
         }
     }
     return store;

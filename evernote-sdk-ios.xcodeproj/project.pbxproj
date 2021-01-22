@@ -486,6 +486,7 @@
 		BECDD3651908DE2A003736EE /* NSDate+EDAMAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E23E818EBA5D500BD7E6E /* NSDate+EDAMAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BECDD3C8190A2DE7003736EE /* ENSDKResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BECDD3C6190A2DE7003736EE /* ENSDKResourceLoader.h */; };
 		BECDD3C9190A2DE7003736EE /* ENSDKResourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD3C7190A2DE7003736EE /* ENSDKResourceLoader.m */; };
+		CC02229725BA571A0062E173 /* ENSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC02229625BA571A0062E173 /* ENSession.swift */; };
 		CCAF0FA425BA111A00BF8C8D /* ENOAuthWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAF0FA125BA111A00BF8C8D /* ENOAuthWindowController.m */; };
 		CCAF0FA525BA111A00BF8C8D /* ENOAuthWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCAF0FA225BA111A00BF8C8D /* ENOAuthWindowController.h */; };
 /* End PBXBuildFile section */
@@ -696,6 +697,8 @@
 		BECDD2FB18F78072003736EE /* ENHTMLNoteContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENHTMLNoteContent.m; sourceTree = "<group>"; };
 		BECDD3C6190A2DE7003736EE /* ENSDKResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSDKResourceLoader.h; sourceTree = "<group>"; };
 		BECDD3C7190A2DE7003736EE /* ENSDKResourceLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSDKResourceLoader.m; sourceTree = "<group>"; };
+		CC02229525BA57190062E173 /* evernote-sdk-ios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "evernote-sdk-ios-Bridging-Header.h"; sourceTree = "<group>"; };
+		CC02229625BA571A0062E173 /* ENSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ENSession.swift; sourceTree = "<group>"; };
 		CCAF0FA125BA111A00BF8C8D /* ENOAuthWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENOAuthWindowController.m; sourceTree = "<group>"; };
 		CCAF0FA225BA111A00BF8C8D /* ENOAuthWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENOAuthWindowController.h; sourceTree = "<group>"; };
 		CCAF0FA325BA111A00BF8C8D /* ENOAuthWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ENOAuthWindowController.xib; sourceTree = "<group>"; };
@@ -850,6 +853,7 @@
 				86CD513719D9DAD600DCC747 /* ENCommonUtils.m */,
 				BE2E23F618EBA5D500BD7E6E /* ENSession.h */,
 				BE2E23F718EBA5D500BD7E6E /* ENSession.m */,
+				CC02229625BA571A0062E173 /* ENSession.swift */,
 				BE2E23EC18EBA5D500BD7E6E /* ENNote.h */,
 				BE2E23ED18EBA5D500BD7E6E /* ENNote.m */,
 				BECDD2F218F77BC3003736EE /* ENNoteContent.h */,
@@ -869,6 +873,7 @@
 				BE2E23F818EBA5D500BD7E6E /* Private */,
 				BE2E245918EBA5D500BD7E6E /* SendToEvernoteActivity */,
 				86F2D7FC1909EDAA00C0AA7F /* ENSDKResources.bundle */,
+				CC02229525BA57190062E173 /* evernote-sdk-ios-Bridging-Header.h */,
 			);
 			name = EvernoteSDK;
 			path = ENSDK;
@@ -1441,6 +1446,9 @@
 				LastUpgradeCheck = 1230;
 				ORGANIZATIONNAME = "Evernote Corporation";
 				TargetAttributes = {
+					0BB3D1AC1524ED96001C4534 = {
+						LastSwiftMigration = 1230;
+					};
 					6D9D60B61E27940A001740D8 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = Q79WDW8YH9;
@@ -1537,6 +1545,7 @@
 				BE7E5F501921808B00A4DA30 /* ENTHTTPClient.m in Sources */,
 				BE2E246518EBA5D500BD7E6E /* EDAMNoteStore.m in Sources */,
 				BE7E5F541921808B00A4DA30 /* ENTProtocol.m in Sources */,
+				CC02229725BA571A0062E173 /* ENSession.swift in Sources */,
 				86D49E46191DA4A8001C3581 /* RMSTokenConstraintManager.m in Sources */,
 				BECDD3C9190A2DE7003736EE /* ENSDKResourceLoader.m in Sources */,
 				BE2E247618EBA5D500BD7E6E /* ENMIMEUtils.m in Sources */,
@@ -1908,6 +1917,7 @@
 		0BB3D1BB1524ED96001C4534 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DSTROOT = /tmp/evernote_sdk_ios.dst;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1917,15 +1927,20 @@
 				GCC_WARN_SHADOW = NO;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "evernote-sdk-ios/ENSDK/evernote-sdk-ios-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		0BB3D1BC1524ED96001C4534 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DSTROOT = /tmp/evernote_sdk_ios.dst;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1935,9 +1950,12 @@
 				GCC_WARN_SHADOW = NO;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "evernote-sdk-ios/ENSDK/evernote-sdk-ios-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

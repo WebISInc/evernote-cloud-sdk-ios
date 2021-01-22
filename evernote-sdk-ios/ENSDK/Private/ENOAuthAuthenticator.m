@@ -35,6 +35,8 @@
 #import "ENOAuthWindowController.h"
 #endif
 
+#import "evernote_sdk_ios-Swift.h"
+
 #import "ENCredentials.h"
 #import "ENCredentialStore.h"
 #import "ENSDKPrivate.h"
@@ -43,6 +45,8 @@
 #import "ENSDKLogging.h"
 
 #import "NSRegularExpression+ENAGRegex.h"
+
+
 
 #define OAUTH_PROTOCOL_SCHEME @"https"
 
@@ -318,7 +322,7 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     
     if (deviceIdentifier == nil) {
         // Alternatively we could try ethernet mac address...
-        NSUserDefaults *userDefaults = [PIDefaultKeys sharedGroupDefaults];
+        NSUserDefaults *userDefaults = [ENSession userDefaults];
         NSString *edamUUID = [userDefaults objectForKey:@"EDAMHTTPClientUUID"];
         if (edamUUID == nil) {
             CFUUIDRef uuidRef = CFUUIDCreate(NULL);
@@ -443,8 +447,8 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
     if ([self.response respondsToSelector:@selector(statusCode)]) {
         NSInteger statusCode = [(id)self.response statusCode];
         if (statusCode != 200) {
-					[PILog error:[NSString stringWithFormat:@"Received error HTTP response code: %ld", (long)statusCode]];
-					[PILog error:[NSString stringWithFormat:@"%@", string]];
+            [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Received error HTTP response code: %ld", (long)statusCode]];
+            [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"%@", string]];
             NSDictionary* userInfo = nil;
             if(statusCode) {
                 NSNumber* statusCodeNumber = [NSNumber numberWithInteger:statusCode];

@@ -30,6 +30,7 @@
 #import "ENSession.h"
 #import "ENSDKPrivate.h"
 #import "ENSSKeychain.h"
+#import "evernote_sdk_ios-Swift.h"
 
 @interface ENCredentials()
 
@@ -84,7 +85,7 @@ authenticationResult:(EDAMAuthenticationResult *)authenticationResult
 
     BOOL success = [query save:&error];
     if (!success) {
-			[PILog error:[NSString stringWithFormat:@"Error saving to keychain: %@ %ld", error, (long)error.code]];
+        [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Error saving to keychain: %@ %ld", error, (long)error.code]];
         return NO;
     } 
     return YES;
@@ -103,7 +104,7 @@ authenticationResult:(EDAMAuthenticationResult *)authenticationResult
 
     NSString *token = [query password];
     if (!token) {
-			[PILog error:[NSString stringWithFormat:@"Error getting password from keychain: %@", error]];
+        [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Error getting password from keychain: %@", error]];
     }
     return token;
 }

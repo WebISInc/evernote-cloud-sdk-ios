@@ -41,6 +41,7 @@
 #import "NSString+URLEncoding.h"
 #import "ENShareURLHelper.h"
 #import "ENCommonUtils.h"
+#import "evernote_sdk_ios-Swift.h"
 
 // Strings visible publicly.
 NSString * const ENSessionHostSandbox = @"sandbox.evernote.com";
@@ -60,9 +61,6 @@ static NSString * ENSessionPreferencesLinkedAppNotebook = @"LinkedAppNotebook";
 static NSString * ENSessionPreferencesSharedAppNotebook = @"SharedAppNotebook";
 
 static NSUInteger ENSessionNotebooksCacheValidity = (5 * 60);   // 5 minutes
-
-@interface ENSessionDefaultLogger : NSObject <ENSDKLogging>
-@end
 
 @interface ENSessionListNotebooksContext : NSObject
 @property (nonatomic, strong) NSMutableArray * resultNotebooks;
@@ -211,7 +209,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     
     NSString * error = @"Cannot create shared Evernote session without either a valid consumer key/secret pair, or a developer token set";
     // Use NSLog and not the session logger here, or we'll deadlock since we're still creating the session.
-	[PILog error:[NSString stringWithFormat:@"ENSession Error: %@", error]];
+    NSLog(@"ENSession Error: %@", error);
     [NSException raise:NSInvalidArgumentException format:@"%@", error];
     return NO;
 }
@@ -1784,7 +1782,6 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     if (!_userStore && self.primaryAuthenticationToken) {
         _userStore = [ENUserStoreClient userStoreClientWithUrl:[self userStoreUrl] authenticationToken:self.primaryAuthenticationToken];
     }
-	_userStore.customResponseQueue = self.customResponseQueue;
    return _userStore;
 }
 
@@ -1800,8 +1797,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
             }
         }
     }
-	
-	_primaryNoteStore.customResponseQueue = self.customResponseQueue;
+
     return _primaryNoteStore;
 }
 
@@ -1812,7 +1808,6 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
         client.delegate = self;
         _businessNoteStore = client;
     }
-	_businessNoteStore.customResponseQueue = self.customResponseQueue;
    return _businessNoteStore;
 }
 
@@ -1821,8 +1816,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     ENLinkedNotebookRef * linkedNotebookRef = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:linkedNotebook];
     ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:linkedNotebookRef];
     linkedClient.delegate = self;
-	
-	linkedClient.customResponseQueue = self.customResponseQueue;
+
     return linkedClient;
 }
 
@@ -1835,7 +1829,6 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
     } else if (noteRef.type == ENNoteRefTypeShared) {
         ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:noteRef.linkedNotebook];
         linkedClient.delegate = self;
-	 	linkedClient.customResponseQueue = self.customResponseQueue;
 		return linkedClient;
     }
     return nil;
@@ -1992,7 +1985,7 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
 
 - (void)authenticatorDidFailWithError:(NSError *)error
 {
-	[PILog error:[NSString stringWithFormat:@"Evernote Authentication Error: %@", [error description]]];
+    [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Evernote Authentication Error: %@", [error description]]];
     [self completeAuthenticationWithError:error];
 }
 
@@ -2036,13 +2029,12 @@ static BOOL disableRefreshingNotebooksCacheOnLaunch;
 @implementation ENSessionDefaultLogger
 - (void)evernoteLogInfoString:(NSString *)str;
 {
-	if (appLoggingLevel & PILoggingSync)
-		[PILog info:[NSString stringWithFormat:@"ENSDK: %@", str]];
+    [ENSession.globalLogger evernoteLogInfoString:[NSString stringWithFormat:@"ENSDK: %@", str]];
 }
 
 - (void)evernoteLogErrorString:(NSString *)str;
 {
-	[PILog error:[NSString stringWithFormat:@"ENSDK ERROR: %@", str]];
+    [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENSDK ERROR: %@", str]];
 }
 @end
 

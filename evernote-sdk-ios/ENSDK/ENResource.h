@@ -37,6 +37,8 @@ typedef NSImage ENImage;
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class EDAMResource;
+
 /**
  *  This class represents a resource attached to an Evernote note. A resource is often an image,
  *  but can be any file with any MIME type. The resource is typically referred to from within the 
