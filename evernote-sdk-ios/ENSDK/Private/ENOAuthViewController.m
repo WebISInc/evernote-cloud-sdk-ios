@@ -29,6 +29,8 @@
 #import "ENOAuthViewController.h"
 #import "ENSDKPrivate.h"
 
+#if TARGET_OS_IPHONE
+
 @interface ENOAuthViewController() <WKNavigationDelegate>
 
 @property (nonatomic, strong) NSURL *authorizationURL;
@@ -196,3 +198,5 @@
 }
 
 @end
+
+#endif

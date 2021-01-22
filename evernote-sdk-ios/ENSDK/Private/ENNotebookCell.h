@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
 #import "ENNotebook.h"
 #import "ENNotebookTypeView.h"
@@ -41,3 +43,5 @@
 @property (strong, nonatomic) ENNotebookTypeView *notebookTypeView;
 
 @end
+
+#endif

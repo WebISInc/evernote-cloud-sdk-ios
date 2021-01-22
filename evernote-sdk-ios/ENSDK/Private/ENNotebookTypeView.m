@@ -29,6 +29,8 @@
 #import "ENNotebookTypeView.h"
 #import "ENTheme.h"
 
+#if TARGET_OS_IPHONE
+
 static CGFloat const kCircleRadius = 13;
 
 @implementation ENNotebookTypeView {
@@ -112,3 +114,5 @@ static CGFloat const kCircleRadius = 13;
 }
 
 @end
+
+#endif

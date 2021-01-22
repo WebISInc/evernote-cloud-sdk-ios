@@ -8,6 +8,7 @@
 
 #import "ENSSKeychainQuery.h"
 #import "ENSSKeychain.h"
+#import "evernote_sdk_ios-Swift.h"
 
 @implementation ENSSKeychainQuery
 
@@ -39,9 +40,9 @@
 
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 	
-	PIKeyChain *keyChain = [[PIKeyChain alloc] initWithSharedStringService:self.service description:PIKeyChain.defaultKeychainDescription synchronizable:NO accessibility:PIKeyChainAccessibilityAlways];
+	[[ENSession keychain] setSharedStringService:self.service description:nil synchronizable:NO];
 	
-	[keyChain setData: self.passwordData forKey:self.account error:error];
+	[[ENSession keychain] setData:self.passwordData forKey:self.account error:error];
 
 	status = error == nil;
 	

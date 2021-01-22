@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+
 #import "ENSaveToEvernoteViewController.h"
 #import "ENNotebookChooserViewController.h"
 #import "ENNotebookPickerButton.h"
@@ -231,3 +233,5 @@ CGFloat kTextLeftPadding = 20;
 }
 
 @end
+
+#endif

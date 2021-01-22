@@ -47,28 +47,6 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
 
 #elif TARGET_OS_MAC && !TARGET_OS_IPHONE
 
-+ (NSString *)pathnameForStoreFilename:(NSString *)filename
-{
-	static NSString *path = nil;
-	if(path == nil)
-	{
-		path = [[NSFileManager informantDocumentsDirectory] stringByAppendingPathComponent: @"Evernote"];
-		NSFileManager *fileMng = [NSFileManager defaultManager];
-		if([fileMng fileExistsAtPath: path] == NO)
-		{
-			NSError *error = nil;
-			if([fileMng createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error: &error] == NO)
-			{
-				[PILog error:[NSString stringWithFormat:@"Error created Evernote store file path: %@", [error description]]];
-			}
-		}
-		
-		path = [path stringByAppendingPathComponent:filename];
-	}
-	
-	return path;
-}
-
 //Apple's standard migration gets the file from the general preferences folder into this folder (which is the Library/Containers folder for the helper).  However, we need to get this file into the Group Containers folder so main app + helper can play with it.  That happens in migratePrefsToSandboxIfNecessary.  This method just gives us the path to the interim place where Apple moves it.
 + (NSString *)_legacyInterimPathnameForStoreFilename:(NSString *)filename
 {
@@ -111,7 +89,7 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
 {
     self = [super init];
     if (self) {
-        self.pathname = [[self class] pathnameForStoreFilename:filename];
+        self.pathname = [ENSession pathnameForStoreFilename](filename);
         [self load];
     }
     return self;

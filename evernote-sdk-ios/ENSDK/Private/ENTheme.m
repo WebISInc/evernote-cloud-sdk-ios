@@ -63,7 +63,7 @@ CGFloat OnePxHeight() {
 #if TARGET_OS_IPHONE
     return 1.0/[UIScreen mainScreen].scale;
 #elif TARGET_OS_MAC && !TARGET_OS_IPHONE
-    return 1.0
+    return 1.0;
 #endif
 }
 

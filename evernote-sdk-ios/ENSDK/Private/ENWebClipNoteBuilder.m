@@ -33,6 +33,7 @@
 #import "ENWebContentTransformer.h"
 
 #import "ENWebArchive.h"
+#import <WebKit/WebKit.h>
 
 
 @interface ENWebClipNoteBuilder()
@@ -176,6 +177,7 @@
                   completionHandler:^(NSString *selectAllResult, NSError * _Nullable selectAllResultError) {
 
             if ([selectAllResult boolValue] == YES) {
+#if TARGET_OS_IPHONE
                 UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
                 NSArray *oldPasteboardContents = [[pasteboard items] copy];
 
@@ -208,6 +210,10 @@
                         }
                     }];
                 }
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+                completionHandler(NO);
+                return;
+#endif
             }
         }];
 

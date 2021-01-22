@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 RoleModel Software. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
 
 #import "RMSTextField.h"
@@ -51,3 +53,5 @@
 - (void)tokenView:(RMSTokenView *)tokenView didChangeText:(NSString *)text;
 
 @end
+
+#endif

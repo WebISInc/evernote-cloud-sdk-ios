@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
 
 @interface ENNotebookPickerButton : UIButton
@@ -34,3 +36,5 @@
 @property (nonatomic, assign) BOOL shouldHideDisclosureIndicator;
 
 @end
+
+#endif

@@ -26,7 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
+
 @class ENSaveToEvernoteActivity;
 @class ENNote;
 
@@ -47,3 +50,4 @@
 @property (nonatomic, strong) ENNote * preparedNote;
 @property (nonatomic, weak) id<ENSaveToEvernoteActivityDelegate> delegate;
 @end
+#endif

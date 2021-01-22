@@ -27,7 +27,15 @@
  */
 
 #import <Foundation/Foundation.h>
+
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+typedef UIImage ENImage;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+typedef NSImage ENImage;
+#endif
+
 #import "ENSDKLogging.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -49,7 +57,7 @@ typedef void (^ENSessionShareNoteCompletionHandler)(NSString *_Nullable url, NSE
 typedef void (^ENSessionDeleteNoteCompletionHandler)(NSError *_Nullable deleteNoteError);
 typedef void (^ENSessionFindNotesCompletionHandler)(NSArray<ENSessionFindNotesResult *> *_Nullable findNotesResults, NSError *_Nullable findNotesError);
 typedef void (^ENSessionDownloadNoteCompletionHandler)(ENNote *_Nullable note, NSError *_Nullable downloadNoteError);
-typedef void (^ENSessionDownloadNoteThumbnailCompletionHandler)(UIImage *_Nullable thumbnail, NSError *_Nullable downloadNoteThumbnailError);
+typedef void (^ENSessionDownloadNoteThumbnailCompletionHandler)(ENImage *_Nullable thumbnail, NSError *_Nullable downloadNoteThumbnailError);
 
 /**
  *  A value indicating how the session should approach creating vs. updating existing notes when uploading.
