@@ -34,6 +34,10 @@
 
 NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreClientDidFailWithAuthenticationErrorNotification";
 
+@interface ENStoreClient ()
+@property (nonatomic, strong) dispatch_queue_t queue;
+@end
+
 @implementation ENStoreClient
 
 - (id)init
@@ -46,8 +50,8 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
     return self;
 }
 
-- (dispatch_queue_t)queue {
-    return _queue ? :dispatch_get_main_queue();
+- (dispatch_queue_t)responseQueue {
+    return self.customResponseQueue ? :dispatch_get_main_queue();
 }
 
 - (void)invokeAsyncBoolBlock:(BOOL(^)(void))block
@@ -57,7 +61,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
         __block BOOL retVal = NO;
         @try {
             retVal = block();
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(self.responseQueue, ^{
                 completion(retVal, nil);
             });
         }
@@ -76,7 +80,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
         __block int32_t retVal = -1;
         @try {
             retVal = block();
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(self.responseQueue, ^{
                 completion(retVal, nil);
             });
         }
@@ -97,7 +101,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
         id retVal = nil;
         @try {
             retVal = block();
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(self.responseQueue, ^{
                 completion(retVal, nil);
             });
         }
@@ -115,7 +119,7 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
     dispatch_async(self.queue, ^(void) {
         @try {
             block();
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(self.responseQueue, ^{
                 completion(nil);
             });
         }

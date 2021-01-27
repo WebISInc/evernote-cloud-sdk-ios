@@ -1759,7 +1759,7 @@ static dispatch_once_t sessionInitToken;
     if (!_userStore && self.primaryAuthenticationToken) {
         _userStore = [ENUserStoreClient userStoreClientWithUrl:[self userStoreUrl] authenticationToken:self.primaryAuthenticationToken];
     }
-    _userStore.queue = self.customResponseQueue;
+    _userStore.customResponseQueue = self.customResponseQueue;
    return _userStore;
 }
 
@@ -1776,7 +1776,7 @@ static dispatch_once_t sessionInitToken;
         }
     }
     
-    _primaryNoteStore.queue = self.customResponseQueue;
+    _primaryNoteStore.customResponseQueue = self.customResponseQueue;
     return _primaryNoteStore;
 }
 
@@ -1788,7 +1788,7 @@ static dispatch_once_t sessionInitToken;
         _businessNoteStore = client;
     }
 
-    _businessNoteStore.queue = self.customResponseQueue;
+    _businessNoteStore.customResponseQueue = self.customResponseQueue;
    return _businessNoteStore;
 }
 
@@ -1798,7 +1798,7 @@ static dispatch_once_t sessionInitToken;
     ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:linkedNotebookRef];
     linkedClient.delegate = self;
 
-    linkedClient.queue = self.customResponseQueue;
+    linkedClient.customResponseQueue = self.customResponseQueue;
     return linkedClient;
 }
 

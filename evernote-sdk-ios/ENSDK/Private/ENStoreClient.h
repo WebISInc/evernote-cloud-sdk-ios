@@ -35,7 +35,8 @@ extern NSString * ENStoreClientDidFailWithAuthenticationErrorNotification;
 
 @interface ENStoreClient : NSObject
 
-@property (nonatomic, strong) dispatch_queue_t queue;
+@property (strong,nonatomic) dispatch_queue_t customResponseQueue;
+- (dispatch_queue_t)responseQueue;
 
 - (void)invokeAsyncBoolBlock:(BOOL(^)(void))block
                   completion:(void (^)(BOOL value, NSError *_Nullable error))completion;
