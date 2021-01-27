@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
+
+@import UIKit;
 @class ENLoadingViewController;
 
 @protocol ENLoadingViewControllerDelegate <NSObject>
@@ -36,3 +40,5 @@
 @interface ENLoadingViewController : UIViewController
 @property (nonatomic, weak) id<ENLoadingViewControllerDelegate> delegate;
 @end
+
+#endif

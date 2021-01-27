@@ -26,17 +26,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "TargetConditionals.h"
+
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#if TARGET_OS_IPHONE
+@import UIKit;
+typedef UIColor ENColor;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@import AppKit;
+typedef NSColor ENColor;
+#endif
+
 
 @interface ENTheme : NSObject
 
-+(UIColor*)defaultTintColor;
-+(UIColor*)defaultBackgroundColor;
-+(UIColor*)defaultBusinessColor;
-+(UIColor*)defaultShareColor;
-+(UIColor*)defaultSeparatorColor;
-BOOL IsIPad();
-CGFloat OnePxHeight();
++(ENColor*)defaultTintColor;
++(ENColor*)defaultBackgroundColor;
++(ENColor*)defaultBusinessColor;
++(ENColor*)defaultShareColor;
++(ENColor*)defaultSeparatorColor;
+BOOL IsIPad(void);
+CGFloat OnePxHeight(void);
 
 @end

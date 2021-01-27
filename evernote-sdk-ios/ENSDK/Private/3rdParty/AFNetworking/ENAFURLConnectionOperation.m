@@ -23,7 +23,7 @@
 #import "ENAFURLConnectionOperation.h"
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
-    #import <UIKit/UIKit.h>
+    @import UIKit;
 #endif
 
 #if !__has_feature(objc_arc)
@@ -643,7 +643,7 @@ didReceiveResponse:(NSURLResponse *)response
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {
-    ENAFURLConnectionOperation *operation = [[[self class] allocWithZone:zone] initWithRequest:self.request];
+    ENAFURLConnectionOperation *operation = [(ENAFURLConnectionOperation*)[[self class] allocWithZone:zone] initWithRequest:self.request];
             
     operation.uploadProgress = self.uploadProgress;
     operation.downloadProgress = self.downloadProgress;

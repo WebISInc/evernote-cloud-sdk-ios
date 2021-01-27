@@ -6,6 +6,9 @@
 //  Copyright (c) 2013 RoleModel Software. All rights reserved.
 //
 
+#import "TargetConditionals.h"
+#if TARGET_OS_IPHONE
+
 #import "RMSTokenView.h"
 #import "RMSTokenConstraintManager.h"
 #import "ENTheme.h"
@@ -570,3 +573,5 @@
 }
 
 @end
+
+#endif

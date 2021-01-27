@@ -28,6 +28,9 @@
 
 #import "ENNotebookTypeView.h"
 #import "ENTheme.h"
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
 
 static CGFloat const kCircleRadius = 13;
 
@@ -112,3 +115,5 @@ static CGFloat const kCircleRadius = 13;
 }
 
 @end
+
+#endif

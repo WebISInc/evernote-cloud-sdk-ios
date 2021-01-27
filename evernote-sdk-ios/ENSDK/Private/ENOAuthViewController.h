@@ -26,17 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
+
+@import UIKit;
 #import <WebKit/WebKit.h>
 
-@class ENOAuthViewController;
-
-@protocol ENOAuthViewControllerDelegate <NSObject>
-- (void)oauthViewControllerDidCancel:(ENOAuthViewController *)sender;
-- (void)oauthViewControllerDidSwitchProfile:(ENOAuthViewController *)sender;
-- (void)oauthViewController:(ENOAuthViewController *)sender didFailWithError:(NSError *)error;
-- (void)oauthViewController:(ENOAuthViewController *)sender receivedOAuthCallbackURL:(NSURL *)url;
-@end
+@protocol ENOAuthViewControllerDelegate;
 
 @interface ENOAuthViewController : UIViewController
 
@@ -51,3 +48,5 @@
 - (void)updateUIForNewProfile:(NSString*)newProfile withAuthorizationURL:(NSURL*)authURL;
 
 @end
+
+#endif

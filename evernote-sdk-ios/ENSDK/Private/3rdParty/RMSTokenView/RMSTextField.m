@@ -7,6 +7,9 @@
 //
 
 #import "RMSTextField.h"
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
 
 @implementation RMSTextField
 
@@ -40,3 +43,6 @@
 }
 
 @end
+
+
+#endif

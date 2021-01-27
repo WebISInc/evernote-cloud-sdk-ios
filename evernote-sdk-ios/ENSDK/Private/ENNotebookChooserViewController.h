@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
+
+@import UIKit;
 #import "EvernoteSDK.h"
 @class ENNotebookChooserViewController;
 
@@ -40,3 +44,5 @@
 @property (nonatomic, strong) NSArray * recentNotebookList;
 @property (nonatomic, strong) ENNotebook * currentNotebook;
 @end
+
+#endif

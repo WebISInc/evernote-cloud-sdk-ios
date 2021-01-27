@@ -26,8 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
+@import UIKit;
+#else
+@import AppKit;
+#endif
+
 #import "ENUserStoreClient.h"
 #import "ENCredentials.h"
 
@@ -48,7 +54,11 @@ extern NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked;
 @property (nonatomic, assign) BOOL useWebAuthenticationOnly;
 @property (nonatomic, assign) BOOL preferRegistration;
 
+#if TARGET_OS_IPHONE
 - (void)authenticateWithViewController:(UIViewController *)viewController;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)authenticateFromWindow:(NSWindow *)window;
+#endif
 
 - (BOOL)handleOpenURL:(NSURL *)url;
 @end

@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "TargetConditionals.h"
+#if TARGET_OS_IPHONE
+
 #import <UIKit/UIKit.h>
 
 @interface ENNotebookTypeView : UIView
@@ -33,3 +36,5 @@
 @property(nonatomic, assign) BOOL isBusiness;
 
 @end
+
+#endif

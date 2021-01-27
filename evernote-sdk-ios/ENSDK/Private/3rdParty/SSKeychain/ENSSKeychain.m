@@ -17,9 +17,7 @@ NSString *const kENSSKeychainLabelKey = @"labl";
 NSString *const kENSSKeychainLastModifiedKey = @"mdat";
 NSString *const kENSSKeychainWhereKey = @"svce";
 
-#if __IPHONE_4_0 && TARGET_OS_IPHONE
-	static CFTypeRef ENSSKeychainAccessibilityType = NULL;
-#endif
+static CFTypeRef ENSSKeychainAccessibilityType = NULL;
 
 @implementation ENSSKeychain
 
@@ -75,8 +73,6 @@ NSString *const kENSSKeychainWhereKey = @"svce";
 	return [query fetchAll:nil];
 }
 
-
-#if __IPHONE_4_0 && TARGET_OS_IPHONE
 + (CFTypeRef)accessibilityType {
 	return ENSSKeychainAccessibilityType;
 }
@@ -89,6 +85,5 @@ NSString *const kENSSKeychainWhereKey = @"svce";
 	}
 	ENSSKeychainAccessibilityType = accessibilityType;
 }
-#endif
 
 @end

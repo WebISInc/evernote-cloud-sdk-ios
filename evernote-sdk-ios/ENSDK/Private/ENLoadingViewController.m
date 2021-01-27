@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
+
 #import "ENLoadingViewController.h"
 
 @interface ENLoadingViewController ()
@@ -74,3 +78,5 @@
     [self.delegate loadingViewControllerDidCancel:self];
 }
 @end
+
+#endif

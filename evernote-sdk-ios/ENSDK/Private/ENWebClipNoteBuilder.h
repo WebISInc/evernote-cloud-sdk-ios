@@ -26,7 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
+@import UIKit;
+#elif TARGET_OS_MAC && !TARGET_OS_IPHONE
+@import AppKit;
+#endif
 #import <WebKit/WebKit.h>
 
 @class ENNote;

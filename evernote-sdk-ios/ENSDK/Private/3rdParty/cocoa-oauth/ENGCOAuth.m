@@ -252,7 +252,7 @@ static BOOL GCOAuthUseHTTPSCookieStorage = YES;
     oauth.requestParameters = parameters;
     
     // create url
-    NSString *encodedPath = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *encodedPath = [path stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
     NSString *URLString = [NSString stringWithFormat:@"%@://%@%@", scheme, host, encodedPath];
     if ([oauth.requestParameters count]) {
         NSString *query = [ENGCOAuth queryStringFromParameters:oauth.requestParameters];
@@ -283,7 +283,13 @@ static BOOL GCOAuthUseHTTPSCookieStorage = YES;
                                               tokenSecret:tokenSecret];
     oauth.HTTPMethod = @"POST";
     oauth.requestParameters = parameters;
-    NSURL *URL = [[NSURL alloc] initWithScheme:@"https" host:host path:path];
+
+	NSURLComponents* urlComponents = [NSURLComponents new];
+	urlComponents.scheme = @"https";
+	urlComponents.host = @"host";
+	urlComponents.path = @"path";
+
+    NSURL *URL = [urlComponents URL];
     oauth.URL = URL;
     
     // create request
@@ -305,11 +311,6 @@ static BOOL GCOAuthUseHTTPSCookieStorage = YES;
 @end
 @implementation NSString (GCOAuthAdditions)
 - (NSString *)pcen {
-    CFStringRef string = CFURLCreateStringByAddingPercentEscapes(NULL,
-                                                                 (CFStringRef)self,
-                                                                 NULL,
-                                                                 CFSTR("!*'();:@&=+$,/?%#[]"),
-                                                                 kCFStringEncodingUTF8);
-    return CFBridgingRelease(string);
+	return [self stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"!*'();:@&=+$,/?%#[]"] invertedSet]];
 }
 @end

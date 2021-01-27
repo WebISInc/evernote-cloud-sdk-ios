@@ -6,6 +6,9 @@
 //  Copyright (c) 2014 Evernote Corporation. All rights reserved.
 //
 
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
 #import "ENNotebookPickerView.h"
 #import "ENTheme.h"
 #import "ENSDKPrivate.h"
@@ -50,3 +53,5 @@ CGFloat kLabelButtonSpace = 10.0;
 }
 
 @end
+
+#endif

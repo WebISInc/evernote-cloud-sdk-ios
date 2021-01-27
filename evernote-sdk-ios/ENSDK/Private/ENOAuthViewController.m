@@ -26,8 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "TargetConditionals.h"
 #import "ENOAuthViewController.h"
 #import "ENSDKPrivate.h"
+
+#if TARGET_OS_IPHONE
 
 @interface ENOAuthViewController() <WKNavigationDelegate>
 
@@ -196,3 +199,5 @@
 }
 
 @end
+
+#endif

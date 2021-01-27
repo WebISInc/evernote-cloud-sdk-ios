@@ -5,6 +5,9 @@
 // To change the template use AppCode | Preferences | File Templates.
 //
 
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
 
 #import "RMSTokenConstraintManager.h"
 #import "RMSTokenView.h"
@@ -111,3 +114,5 @@ RMSTokenConstraintManager *sharedManager;
 }
 
 @end
+
+#endif

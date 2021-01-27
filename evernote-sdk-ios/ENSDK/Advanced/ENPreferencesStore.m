@@ -28,6 +28,7 @@
 
 #import "ENPreferencesStore.h"
 #import "ENSDKPrivate.h"
+#import "ENSession.h"
 
 static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.plist";
 
@@ -37,17 +38,12 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
 @end
 
 @implementation ENPreferencesStore
-+ (NSString *)pathnameForStoreFilename:(NSString *)filename
-{
-    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    return [[paths[0] stringByAppendingPathComponent:@"Preferences"] stringByAppendingPathComponent:filename];
-}
 
 - (id)initWithStoreFilename:(NSString *)filename
 {
     self = [super init];
     if (self) {
-        self.pathname = [[self class] pathnameForStoreFilename:filename];
+        self.pathname = [ENSession pathnameForStoreFilenameBlock](filename);
         [self load];
     }
     return self;
@@ -111,8 +107,9 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
     id object = nil;
     @try {
         object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+			[ENSession.globalLogger evernoteLogInfoString:[NSString stringWithFormat:@"Evernote: ENPreferenceStore decodedObjectForKey OBJECT: %@", object]];
     } @catch(id e) {
-        NSLog(@"ENPreferencesStore: Error unarchiving object for key %@ : %@", key, e);
+			[ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Error unarchiving object for key %@ : %@", key, e]];
         // DON'T nuke whatever object this is, maybe the called called the wrong
         // getter.
     }
@@ -126,7 +123,7 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
     @try {
         data = [NSKeyedArchiver archivedDataWithRootObject:object];
     } @catch(id e) {
-        NSLog(@"ENPreferencesStore: Error archiving object of root class %@ : %@", [object class], e);
+        [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Error archiving object of root class %@ : %@", [object class], e]];
     }
     if (data) {
         @synchronized(self) {
@@ -145,11 +142,11 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
     NSError * error = nil;
     NSData * data = [NSPropertyListSerialization dataWithPropertyList:store format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
     if (!data) {
-        NSLog(@"ENPreferencesStore: Error serializing prefs store. %@", error);
+        [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Error serializing prefs store. %@", error]];
     }
     if (data) {
         if (![data writeToFile:self.pathname options:NSDataWritingAtomic error:&error]) {
-            NSLog(@"ENPreferencesStore: Error writing prefs store. %@", error);
+            [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Error writing prefs store. %@", error]];
         }
     }
 }
@@ -173,7 +170,7 @@ static NSString * ENPreferencesStoreFilename = @"com.evernote.evernote-sdk-ios.p
         prefs = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListMutableContainers format:&format error:&error];
         if (!prefs || format != NSPropertyListXMLFormat_v1_0) {
             // File was there but failed to deserialize. That's worth logging.
-            NSLog(@"ENPreferencesStore: Failed to open preferences store at %@: %@", self.pathname, error);
+            [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"ENPreferencesStore: Failed to open preferences store at %@: %@", self.pathname, error]];
             prefs = nil;
         }
     }

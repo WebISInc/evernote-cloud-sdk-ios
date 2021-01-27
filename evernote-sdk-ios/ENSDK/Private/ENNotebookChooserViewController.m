@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "TargetConditionals.h"
+
+#if TARGET_OS_IPHONE
+
 #import "ENNotebookChooserViewController.h"
 #import "ENNotebookCell.h"
 #import "ENTheme.h"
@@ -245,3 +249,5 @@
 }
 
 @end
+
+#endif

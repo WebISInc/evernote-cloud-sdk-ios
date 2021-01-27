@@ -95,16 +95,21 @@
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if((self = [super init])) {
-        self.store = [decoder decodeObjectForKey:@"store"];
+		self.store = [decoder decodeObjectOfClasses:[NSSet setWithObjects: [NSDictionary class], [NSString class], [ENCredentials class], nil] forKey:@"store"];
     }
     return self;
+}
+
++ (BOOL)supportsSecureCoding
+{
+	return YES;
 }
 
 #pragma mark - legacy/migration
 
 + (ENCredentialStore *)loadCredentialsFromAppDefaults
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *defaults = [ENSession userDefaults];
     NSData *data = [defaults objectForKey:DEFAULTS_CREDENTIAL_STORE_KEY];
     ENCredentialStore *store = nil;
     if (data) {
@@ -115,7 +120,7 @@
             // Deal with things like NSInvalidUnarchiveOperationException
             // just return nil for situations like this, and the caller
             // can create and save a new credentials store.
-            NSLog(@"Exception unarchiving ENCredentialStore: %@", exception);
+            [ENSession.globalLogger evernoteLogErrorString:[NSString stringWithFormat:@"Exception unarchiving ENCredentialStore: %@", exception]];
         }
     }
     return store;

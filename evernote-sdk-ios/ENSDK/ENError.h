@@ -53,7 +53,7 @@ typedef NS_ENUM(NSInteger, ENErrorCode) {
 + (NSError *)noteSizeLimitReachedError;
 + (nullable NSError *)errorFromException:(nullable NSException *)exception;
 + (ENErrorCode)sanitizedErrorCodeFromEDAMErrorCode:(int)code;
-
++ (NSString *)localizedDescriptionForENErrorCode:(ENErrorCode)code;
 @end
 
 NS_ASSUME_NONNULL_END

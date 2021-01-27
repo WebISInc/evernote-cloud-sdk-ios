@@ -27,7 +27,19 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "TargetConditionals.h"
+#import "ENOAuthProtocols.h"
+
+@protocol ENSDKLogging;
+
+typedef NSString *__nonnull(^StoreFileNameBlock) (NSString* __nonnull fileName);
+
+@protocol ENKeychain <NSObject>
+
+- (void)setENSharedStringService:(nonnull NSString *)service description:(nullable NSString *)description synchronizable:(BOOL)synchronizable;
+- (void)setENData:(nonnull NSData *)data forKey:(nonnull NSString *)key error:(NSError **)error;
+
+@end
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,7 +60,7 @@ typedef void (^ENSessionShareNoteCompletionHandler)(NSString *_Nullable url, NSE
 typedef void (^ENSessionDeleteNoteCompletionHandler)(NSError *_Nullable deleteNoteError);
 typedef void (^ENSessionFindNotesCompletionHandler)(NSArray<ENSessionFindNotesResult *> *_Nullable findNotesResults, NSError *_Nullable findNotesError);
 typedef void (^ENSessionDownloadNoteCompletionHandler)(ENNote *_Nullable note, NSError *_Nullable downloadNoteError);
-typedef void (^ENSessionDownloadNoteThumbnailCompletionHandler)(UIImage *_Nullable thumbnail, NSError *_Nullable downloadNoteThumbnailError);
+typedef void (^ENSessionDownloadNoteThumbnailCompletionHandler)(ENImage *_Nullable thumbnail, NSError *_Nullable downloadNoteThumbnailError);
 
 /**
  *  A value indicating how the session should approach creating vs. updating existing notes when uploading.
@@ -222,6 +234,14 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
  */
 @property (nonatomic, readonly) long long businessUploadLimit;
 
+/**
+ * Custom response queue if you want the responses to go to a specific queue.
+ * Leave it nil to go to main queue
+ */
+@property (strong,nonatomic) dispatch_queue_t customResponseQueue;
+
+@property (nonatomic, readonly, nullable) NSString * primaryAuthenticationToken;
+
 #pragma mark - Session setup
 
 /**
@@ -257,6 +277,12 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
 @property (class, readonly, nonatomic) ENSession *sharedSession;
 
 /**
+ *  Reset the shared session object
+ *
+ */
++ (void)clearSharedSession;
+
+/**
  *  Set to YES if the client would like to opt out from refreshing the notebooks cache on launch
  *
  *  @param disable Whether to disable the SDK to refresh the notebooks cache on launch
@@ -274,9 +300,16 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
      you want users to be able to register an Evernote account from your app
  *  @param completion           A block to receive the result of the operation (an error if there was one).
  */
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+- (void)authenticateWithWindow:(NSWindow *)window
+			preferRegistration:(BOOL)preferRegistration
+					completion:(ENSessionAuthenticateCompletionHandler)completion;
+#elif TARGET_OS_IPHONE
 - (void)authenticateWithViewController:(UIViewController *)viewController
-                    preferRegistration:(BOOL)preferRegistration
-                            completion:(ENSessionAuthenticateCompletionHandler)completion;
+					preferRegistration:(BOOL)preferRegistration
+							completion:(ENSessionAuthenticateCompletionHandler)completion;
+
+#endif
 
 /**
  *  Unauthenticate the current user.
@@ -417,34 +450,28 @@ typedef NS_OPTIONS(NSUInteger, ENSessionSortOrder) {
                     maxDimension:(NSUInteger)maxDimension
                       completion:(ENSessionDownloadNoteThumbnailCompletionHandler)completion;
 
-#pragma mark - Interaction with Evernote app
-
-/**
- *  View this note in the Evernote app
- *
- *  @param noteRef The note to view
- *
- *  @return No means the Evernote app is not installed or not available. Yes does not guarantee that this note is successfuly opened,
- *          as the user could have logged into another account in the Evernote app.
- */
-- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef NS_SWIFT_NAME(viewNoteInEvernote(_:));
-
-/**
- *  View this note in the Evernote app and call callbackURL when done
- *
- *  @param noteRef      The note to view
- *  @param callbackURL  callback URL to open after done with the note, something like YOURAPP_URL_SCHEME://callback
- *
- *  @return No means the Evernote app is not installed or not available. Yes does not guarantee that this note is successfuly opened,
- *          as the user could have logged into another account in the Evernote app.
- */
-- (BOOL)viewNoteInEvernote:(ENNoteRef *)noteRef callbackURL:(NSString *)callbackURL NS_SWIFT_NAME(viewNoteInEvernote(_:callbackURL:));
-
 #pragma mark - Custom Evernote login in your app
 
 @property (nonatomic, copy, nullable) NSString *customEvernoteLoginTitle;
 
 @property (nonatomic, copy, nullable) NSString *customEvernoteLoginDescription;
+
+#pragma mark - class properties
+
++ (NSObject<ENSDKLogging> *)globalLogger;
++ (void)setGlobalLogger:(NSObject<ENSDKLogging> *)globalLogger;
+
++ (NSUserDefaults *)userDefaults;
++ (void)setUserDefaults:(NSUserDefaults *)userDefaults;
+
++ (StoreFileNameBlock __nullable)pathnameForStoreFilenameBlock;
++ (void)setPathnameForStoreFilenameBlock:(StoreFileNameBlock __nullable)block;
+
++ (AuthViewBlock __nullable)authControllerBlock;
++ (void)setAuthControllerBlock:(AuthViewBlock __nullable)block;
+
++ (NSObject<ENKeychain> *)keychain;
++ (void)setKeychain:(NSObject<ENKeychain> *)keychain;
 
 @end
 

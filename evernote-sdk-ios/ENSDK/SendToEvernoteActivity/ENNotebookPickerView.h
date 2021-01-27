@@ -6,7 +6,10 @@
 //  Copyright (c) 2014 Evernote Corporation. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "TargetConditionals.h"
+#if TARGET_OS_IPHONE
+
+@import UIKit;
 #import "ENNotebookPickerButton.h"
 
 @interface ENNotebookPickerView : UIButton
@@ -15,3 +18,5 @@
 @property (nonatomic, strong) ENNotebookPickerButton *notebookPickerButton;
 
 @end
+
+#endif
