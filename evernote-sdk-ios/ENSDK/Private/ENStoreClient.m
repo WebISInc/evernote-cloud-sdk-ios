@@ -46,6 +46,10 @@ NSString * ENStoreClientDidFailWithAuthenticationErrorNotification = @"ENStoreCl
     return self;
 }
 
+- (dispatch_queue_t)queue {
+    return _queue ? :dispatch_get_main_queue();
+}
+
 - (void)invokeAsyncBoolBlock:(BOOL(^)(void))block
                   completion:(void (^)(BOOL val, NSError *error))completion
 {
